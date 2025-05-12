@@ -6,8 +6,8 @@
 
 body {
     font-family: 'Comic Neue', Arial, sans-serif;
-    background: #1A1F2E; /* Solana koyu arka plan */
-    color: #FFFFFF; /* Beyaz metin */
+    background: #1A1F2E;
+    color: #FFFFFF;
     line-height: 1.6;
 }
 
@@ -364,8 +364,8 @@ header {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
     justify-content: center;
-    align-items: flex-start; /* Yukarıda hizalamak için */
-    padding-top: 100px; /* Biraz daha yukarıda durması için */
+    align-items: flex-start;
+    padding-top: 100px;
 }
 
 .modal-content {
@@ -380,7 +380,7 @@ header {
     flex-direction: column;
     gap: 15px;
     position: relative;
-    z-index: 1001; /* Modal içeriği en üstte olsun */
+    z-index: 1001;
 }
 
 .modal-content h3 {
@@ -407,6 +407,15 @@ header {
 
 .rules-list li {
     margin-bottom: 10px;
+}
+
+.tutorial-gif {
+    width: 480px;
+    height: 270px;
+    border-radius: 10px;
+    border: 2px solid #9945FF;
+    display: block;
+    margin: 0 auto;
 }
 
 #closeTutorialBtn {
@@ -561,6 +570,6 @@ footer {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999; /* Modalın altında kalsın */
-    backdrop-filter: blur(2px); /* Daha hafif bulanıklık */
+    z-index: 999;
+    backdrop-filter: blur(2px);
 }
