@@ -26,7 +26,7 @@
             <!-- Drawing Area -->
             <div class="drawing-area">
                 <div class="horse-image">
-                    <img src="assets/half-horse.png" alt="Half Horse" id="half-horse">
+                    <img src="assets/half-horse.png" alt="Half Horse" id="half-horse" crossorigin="anonymous">
                     <canvas id="drawingCanvas" width="1200" height="800"></canvas>
                 </div>
             </div>
@@ -35,6 +35,7 @@
             <div class="toolbar">
                 <div class="tool-section">
                     <button id="clearBtn" class="action-btn">Clear</button>
+                    <button id="undoBtn" class="action-btn">Undo (Ctrl+Z)</button>
                     <button id="publishBtn" class="action-btn publish">Publish!</button>
                 </div>
                 <div class="tool-section">
@@ -65,13 +66,21 @@
         </div>
     </div>
 
-    <!-- Modal (Pop-up) -->
+    <!-- Modal for Publishing -->
     <div class="modal" id="publishModal">
         <div class="modal-content">
             <h3>Publish Your Drawing</h3>
             <input type="text" id="drawingTitle" placeholder="Enter Title" class="title-input">
             <img id="drawingPreview" alt="Drawing Preview">
             <button id="confirmPublishBtn" class="action-btn publish">Publish!</button>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Drawing -->
+    <div class="modal" id="viewDrawingModal">
+        <div class="modal-content view-drawing-modal">
+            <h3 id="viewDrawingTitle">Drawing Title</h3>
+            <img id="viewDrawingImage" alt="Full Drawing">
         </div>
     </div>
 
