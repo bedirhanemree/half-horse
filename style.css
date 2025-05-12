@@ -275,8 +275,8 @@ header {
 }
 
 .gallery-item img {
-    width: 150px;
-    height: 300px; /* 1:2 oranı */
+    width: 300px;
+    height: 150px; /* 1:2 oranı */
     object-fit: cover;
     border-radius: 15px;
     border: 2px solid #9945FF; /* Solana moru */
