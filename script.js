@@ -3,6 +3,7 @@ const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 const clearBtn = document.getElementById('clearBtn');
 const undoBtn = document.getElementById('undoBtn');
+const eraserBtn = document.getElementById('eraserBtn');
 const publishBtn = document.getElementById('publishBtn');
 const colorPicker = document.getElementById('colorPicker');
 const brushSize = document.getElementById('brushSize');
@@ -31,11 +32,13 @@ let currentColor = colorPicker ? colorPicker.value : '#000000';
 let undoHistory = [];
 let currentUser = null; // Şu anki kullanıcıyı saklamak için
 let currentDrawing = null; // Şu an görüntülenen çizimi saklamak için
+let isErasing = false; // Silgi modunu takip etmek için
 
 // Elementlerin varlığını kontrol et
 console.log('Canvas:', canvas);
 console.log('Context:', ctx);
 console.log('Publish Button:', publishBtn);
+console.log('Eraser Button:', eraserBtn);
 console.log('Publish Modal:', publishModal);
 console.log('Drawing Preview:', drawingPreview);
 console.log('Drawing Title:', drawingTitle);
@@ -176,6 +179,8 @@ if (colorButtons) {
             button.classList.add('active');
             currentColor = button.dataset.color;
             if (colorPicker) colorPicker.value = currentColor;
+            isErasing = false; // Renk seçildiğinde silgi modunu kapat
+            eraserBtn.classList.remove('active');
         });
     });
 }
@@ -186,6 +191,22 @@ if (colorPicker) {
         console.log('Color picker changed:', colorPicker.value);
         currentColor = colorPicker.value;
         colorButtons.forEach(btn => btn.classList.remove('active'));
+        isErasing = false; // Renk seçildiğinde silgi modunu kapat
+        eraserBtn.classList.remove('active');
+    });
+}
+
+// Silgi butonu
+if (eraserBtn) {
+    eraserBtn.addEventListener('click', () => {
+        console.log('Eraser button clicked');
+        isErasing = !isErasing; // Silgi modunu aç/kapat
+        if (isErasing) {
+            eraserBtn.classList.add('active');
+            colorButtons.forEach(btn => btn.classList.remove('active'));
+        } else {
+            eraserBtn.classList.remove('active');
+        }
     });
 }
 
@@ -208,7 +229,13 @@ if (canvas && ctx) {
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             console.log('Mouse move:', x, y);
-            ctx.strokeStyle = currentColor;
+            if (isErasing) {
+                ctx.globalCompositeOperation = 'destination-out'; // Silgi modu: Çizilen alanı şeffaf yap
+                ctx.strokeStyle = 'rgba(0,0,0,1)';
+            } else {
+                ctx.globalCompositeOperation = 'source-over'; // Normal çizim modu
+                ctx.strokeStyle = currentColor;
+            }
             ctx.lineWidth = brushSize.value;
             ctx.lineTo(x, y);
             ctx.stroke();
