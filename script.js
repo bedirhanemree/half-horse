@@ -7,6 +7,7 @@ const eraserBtn = document.getElementById('eraserBtn');
 const publishBtn = document.getElementById('publishBtn');
 const colorPicker = document.getElementById('colorPicker');
 const brushSize = document.getElementById('brushSize');
+const brushPreview = document.getElementById('brushPreview');
 const gallery = document.getElementById('gallery');
 const colorButtons = document.querySelectorAll('.color-btn');
 const copyBtn = document.getElementById('copyBtn');
@@ -39,6 +40,7 @@ console.log('Canvas:', canvas);
 console.log('Context:', ctx);
 console.log('Publish Button:', publishBtn);
 console.log('Eraser Button:', eraserBtn);
+console.log('Brush Preview:', brushPreview);
 console.log('Publish Modal:', publishModal);
 console.log('Drawing Preview:', drawingPreview);
 console.log('Drawing Title:', drawingTitle);
@@ -170,6 +172,20 @@ function undoLastAction() {
     };
 }
 
+// Fırça boyutu önizlemesini güncelleme fonksiyonu
+function updateBrushPreview() {
+    if (!brushPreview || !brushSize) return;
+
+    const size = parseInt(brushSize.value);
+    brushPreview.style.width = `${size}px`;
+    brushPreview.style.height = `${size}px`;
+    if (isErasing) {
+        brushPreview.style.backgroundColor = 'rgba(255, 255, 255, 0.5)'; // Silgi için beyaz ve saydam
+    } else {
+        brushPreview.style.backgroundColor = `${currentColor}80`; // Seçili renk, saydam (80 hexadecimal = 0.5 opacity)
+    }
+}
+
 // Renk butonlarına tıklama eventi
 if (colorButtons) {
     colorButtons.forEach(button => {
@@ -181,6 +197,7 @@ if (colorButtons) {
             if (colorPicker) colorPicker.value = currentColor;
             isErasing = false; // Renk seçildiğinde silgi modunu kapat
             eraserBtn.classList.remove('active');
+            updateBrushPreview(); // Fırça önizlemesini güncelle
         });
     });
 }
@@ -193,6 +210,15 @@ if (colorPicker) {
         colorButtons.forEach(btn => btn.classList.remove('active'));
         isErasing = false; // Renk seçildiğinde silgi modunu kapat
         eraserBtn.classList.remove('active');
+        updateBrushPreview(); // Fırça önizlemesini güncelle
+    });
+}
+
+// Fırça boyutu değiştiğinde
+if (brushSize) {
+    brushSize.addEventListener('input', () => {
+        console.log('Brush size changed:', brushSize.value);
+        updateBrushPreview(); // Fırça önizlemesini güncelle
     });
 }
 
@@ -207,6 +233,7 @@ if (eraserBtn) {
         } else {
             eraserBtn.classList.remove('active');
         }
+        updateBrushPreview(); // Fırça önizlemesini güncelle
     });
 }
 
@@ -225,7 +252,7 @@ if (canvas && ctx) {
     // Çizim devam etme
     canvas.addEventListener('mousemove', (e) => {
         if (drawing) {
-            const rect = canvas.getBoundingClientRect();
+            const rect = canvas.getBoundingRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             console.log('Mouse move:', x, y);
@@ -506,6 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Page loaded, initializing user and loading drawings...');
     initializeUser();
     loadDrawings();
+    updateBrushPreview(); // İlk yüklemede fırça önizlemesini güncelle
 });
 
 // Modal'ı açma
