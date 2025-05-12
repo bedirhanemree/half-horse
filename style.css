@@ -276,7 +276,7 @@ header {
 
 .gallery-item img {
     width: 150px;
-    height: 150px;
+    height: 300px; /* 1:2 oranı */
     object-fit: cover;
     border-radius: 15px;
     border: 2px solid #9945FF; /* Solana moru */
@@ -287,8 +287,17 @@ header {
     transform: scale(1.05);
 }
 
-.gallery-item p {
+.gallery-item .creator {
     margin: 5px 0 0;
+    font-size: 12px;
+    color: #14F195; /* Solana mavisi */
+    font-weight: 600;
+    word-wrap: break-word;
+    display: block;
+}
+
+.gallery-item .title {
+    margin: 2px 0 0;
     font-size: 14px;
     color: #FFFFFF; /* Beyaz metin */
     font-weight: 600;
@@ -354,12 +363,92 @@ header {
     max-width: 90%;
 }
 
+#viewDrawingCreator {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #14F195; /* Solana mavisi */
+    font-weight: 600;
+}
+
 #viewDrawingImage {
     width: 100%;
     max-height: 400px;
     object-fit: contain;
     border-radius: 15px;
     border: 2px solid #9945FF; /* Solana moru */
+}
+
+.interaction-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+#likeDrawingBtn {
+    background-color: #14F195; /* Solana mavisi */
+    color: #1A1F2E;
+}
+
+#likeDrawingBtn.liked {
+    background-color: #ff6f61; /* Beğenildiğinde kırmızı ton */
+    color: #FFFFFF;
+}
+
+.comments-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comments-section h4 {
+    margin: 0;
+    color: #14F195; /* Solana mavisi */
+    font-size: 1.2em;
+}
+
+#commentsList {
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #1A1F2E;
+    border-radius: 10px;
+    border: 1px solid #9945FF; /* Solana moru */
+}
+
+.comment {
+    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 1px solid #9945FF; /* Solana moru */
+}
+
+.comment .username {
+    font-weight: 600;
+    color: #14F195; /* Solana mavisi */
+}
+
+.comment .timestamp {
+    font-size: 12px;
+    color: #999;
+}
+
+.comment .text {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #FFFFFF;
+}
+
+.comment-input {
+    width: 100%;
+    height: 60px;
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid #9945FF; /* Solana moru */
+    border-radius: 10px;
+    outline: none;
+    background-color: #1A1F2E;
+    color: #FFFFFF;
+    resize: none;
 }
 
 footer {
