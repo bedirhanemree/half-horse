@@ -184,9 +184,9 @@ function updateBrushPreview() {
     brushPreview.style.width = `${size}px`;
     brushPreview.style.height = `${size}px`;
     if (isErasing) {
-        brushPreview.style.backgroundColor = 'rgba(255, 255, 255, 0.5)'; // Silgi için beyaz ve saydam
+        brushPreview.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
     } else {
-        brushPreview.style.backgroundColor = `${currentColor}80`; // Seçili renk, saydam (80 hexadecimal = 0.5 opacity)
+        brushPreview.style.backgroundColor = `${currentColor}80`;
     }
 }
 
@@ -196,13 +196,17 @@ function showTutorialModal() {
     const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
     if (hasSeenTutorial === 'true') {
         console.log('User has already seen the tutorial.');
-        return; // Eğer gördüyse modalı gösterme
+        return;
     }
 
-    // Modal'ı göster ve arka planı bulanık yap
+    // Modal'ı göster
     if (tutorialModal) {
+        // Arka plan katmanı oluştur
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+        document.body.appendChild(backdrop);
+
         tutorialModal.style.display = 'flex';
-        document.body.classList.add('blurred');
         console.log('Showing tutorial modal');
     }
 }
@@ -212,7 +216,9 @@ if (closeTutorialBtn) {
     closeTutorialBtn.addEventListener('click', () => {
         if (tutorialModal) {
             tutorialModal.style.display = 'none';
-            document.body.classList.remove('blurred');
+            // Arka plan katmanını kaldır
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
             // Kullanıcının modalı gördüğünü localStorage'a kaydet
             localStorage.setItem('hasSeenTutorial', 'true');
             console.log('Tutorial modal closed, saved to localStorage');
@@ -225,7 +231,9 @@ if (tutorialModal) {
     window.addEventListener('click', (e) => {
         if (e.target === tutorialModal) {
             tutorialModal.style.display = 'none';
-            document.body.classList.remove('blurred');
+            // Arka plan katmanını kaldır
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
             // Kullanıcının modalı gördüğünü localStorage'a kaydet
             localStorage.setItem('hasSeenTutorial', 'true');
             console.log('Tutorial modal closed by clicking outside, saved to localStorage');
@@ -242,9 +250,9 @@ if (colorButtons) {
             button.classList.add('active');
             currentColor = button.dataset.color;
             if (colorPicker) colorPicker.value = currentColor;
-            isErasing = false; // Renk seçildiğinde silgi modunu kapat
+            isErasing = false;
             eraserBtn.classList.remove('active');
-            updateBrushPreview(); // Fırça önizlemesini güncelle
+            updateBrushPreview();
         });
     });
 }
@@ -255,9 +263,9 @@ if (colorPicker) {
         console.log('Color picker changed:', colorPicker.value);
         currentColor = colorPicker.value;
         colorButtons.forEach(btn => btn.classList.remove('active'));
-        isErasing = false; // Renk seçildiğinde silgi modunu kapat
+        isErasing = false;
         eraserBtn.classList.remove('active');
-        updateBrushPreview(); // Fırça önizlemesini güncelle
+        updateBrushPreview();
     });
 }
 
@@ -265,7 +273,7 @@ if (colorPicker) {
 if (brushSize) {
     brushSize.addEventListener('input', () => {
         console.log('Brush size changed:', brushSize.value);
-        updateBrushPreview(); // Fırça önizlemesini güncelle
+        updateBrushPreview();
     });
 }
 
@@ -273,14 +281,14 @@ if (brushSize) {
 if (eraserBtn) {
     eraserBtn.addEventListener('click', () => {
         console.log('Eraser button clicked');
-        isErasing = !isErasing; // Silgi modunu aç/kapat
+        isErasing = !isErasing;
         if (isErasing) {
             eraserBtn.classList.add('active');
             colorButtons.forEach(btn => btn.classList.remove('active'));
         } else {
             eraserBtn.classList.remove('active');
         }
-        updateBrushPreview(); // Fırça önizlemesini güncelle
+        updateBrushPreview();
     });
 }
 
@@ -304,10 +312,10 @@ if (canvas && ctx) {
             const y = e.clientY - rect.top;
             console.log('Mouse move:', x, y);
             if (isErasing) {
-                ctx.globalCompositeOperation = 'destination-out'; // Silgi modu: Çizilen alanı şeffaf yap
+                ctx.globalCompositeOperation = 'destination-out';
                 ctx.strokeStyle = 'rgba(0,0,0,1)';
             } else {
-                ctx.globalCompositeOperation = 'source-over'; // Normal çizim modu
+                ctx.globalCompositeOperation = 'source-over';
                 ctx.strokeStyle = currentColor;
             }
             ctx.lineWidth = brushSize.value;
@@ -321,7 +329,7 @@ if (canvas && ctx) {
         console.log('Mouse up');
         drawing = false;
         ctx.closePath();
-        saveCanvasState(); // Çizim tamamlandığında durumu kaydet
+        saveCanvasState();
     });
 
     // Çizimi canvas dışına çıkıldığında durdur
@@ -330,7 +338,7 @@ if (canvas && ctx) {
             console.log('Mouse leave');
             drawing = false;
             ctx.closePath();
-            saveCanvasState(); // Çizim tamamlandığında durumu kaydet
+            saveCanvasState();
         }
     });
 }
@@ -340,7 +348,7 @@ if (clearBtn && ctx) {
     clearBtn.addEventListener('click', () => {
         console.log('Clearing canvas');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        saveCanvasState(); // Temizleme sonrası durumu kaydet
+        saveCanvasState();
     });
 }
 
@@ -355,7 +363,7 @@ if (undoBtn) {
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'z') {
         console.log('Ctrl+Z pressed');
-        e.preventDefault(); // Varsayılan tarayıcı davranışını engelle
+        e.preventDefault();
         undoLastAction();
     }
 });
@@ -368,10 +376,9 @@ function combineCanvasWithHorse() {
         return null;
     }
 
-    // Küçük bir canvas oluştur (örneğin, 600x400px)
     const tempCanvas = document.createElement('canvas');
-    const targetWidth = 600; // Küçük boyut
-    const targetHeight = 400; // Küçük boyut
+    const targetWidth = 600;
+    const targetHeight = 400;
     tempCanvas.width = targetWidth;
     tempCanvas.height = targetHeight;
     const tempCtx = tempCanvas.getContext('2d');
@@ -381,7 +388,6 @@ function combineCanvasWithHorse() {
         return null;
     }
 
-    // At görselini küçük boyutta çiz
     console.log('Drawing horse image...');
     try {
         tempCtx.drawImage(horseImage, 0, 0, targetWidth, targetHeight);
@@ -390,7 +396,6 @@ function combineCanvasWithHorse() {
         return null;
     }
 
-    // Kullanıcının çizimini küçük boyutta ekle
     console.log('Drawing canvas content...');
     try {
         tempCtx.drawImage(canvas, 0, 0, targetWidth, targetHeight);
@@ -399,10 +404,9 @@ function combineCanvasWithHorse() {
         return null;
     }
 
-    // Küçük boyutta dataURL oluştur
     console.log('Exporting canvas to data URL...');
     try {
-        const dataURL = tempCanvas.toDataURL('image/png', 0.7); // Kaliteyi 0.7 olarak ayarladık (daha küçük dosya boyutu)
+        const dataURL = tempCanvas.toDataURL('image/png', 0.7);
         console.log('Combined image created:', dataURL.substring(0, 50) + '...');
         return dataURL;
     } catch (err) {
@@ -422,7 +426,7 @@ function loadDrawings() {
     const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
     console.log('Loaded drawings from localStorage:', drawings);
 
-    gallery.innerHTML = ''; // Galeriyi temizle
+    gallery.innerHTML = '';
     if (drawings.length === 0) {
         console.log('No drawings found in localStorage.');
         const message = document.createElement('p');
@@ -452,17 +456,14 @@ function loadDrawings() {
         title.textContent = drawing.title || 'Untitled';
         galleryItem.appendChild(title);
 
-        // Galerideki resme tıklama eventi
         galleryItem.addEventListener('click', () => {
             console.log('Gallery item clicked:', drawing.title);
             if (viewDrawingModal && viewDrawingImage && viewDrawingTitle && viewDrawingCreator) {
-                currentDrawing = { ...drawing, index }; // Çizim ve indeksini sakla
+                currentDrawing = { ...drawing, index };
                 viewDrawingImage.src = drawing.image;
                 viewDrawingTitle.textContent = drawing.title || 'Untitled';
                 viewDrawingCreator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
                 viewDrawingModal.style.display = 'flex';
-
-                // Beğeni ve yorumları güncelle
                 updateLikesAndComments();
             } else {
                 console.error('View drawing modal elements not found.');
@@ -477,7 +478,6 @@ function loadDrawings() {
 function updateLikesAndComments() {
     if (!currentDrawing || !likeCount || !commentsList || !likeDrawingBtn) return;
 
-    // Beğeni sayısını güncelle
     const likes = currentDrawing.likes || [];
     likeCount.textContent = likes.length;
     if (currentUser && likes.includes(currentUser.userId)) {
@@ -486,7 +486,6 @@ function updateLikesAndComments() {
         likeDrawingBtn.classList.remove('liked');
     }
 
-    // Yorumları göster
     commentsList.innerHTML = '';
     const comments = currentDrawing.comments || [];
     if (comments.length === 0) {
@@ -532,10 +531,10 @@ if (likeDrawingBtn) {
         const index = drawing.likes.indexOf(userId);
 
         if (index === -1) {
-            drawing.likes.push(userId); // Beğen
+            drawing.likes.push(userId);
             console.log('Liked drawing:', drawing.title);
         } else {
-            drawing.likes.splice(index, 1); // Beğeniyi kaldır
+            drawing.likes.splice(index, 1);
             console.log('Unliked drawing:', drawing.title);
         }
 
@@ -584,7 +583,7 @@ if (submitCommentBtn) {
             alert('Error saving comment. LocalStorage might be full.');
         }
         currentDrawing = { ...drawing, index: currentDrawing.index };
-        commentInput.value = ''; // Yorum alanını temizle
+        commentInput.value = '';
         updateLikesAndComments();
         console.log('Comment added:', newComment);
     });
@@ -595,8 +594,8 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Page loaded, initializing user and loading drawings...');
     initializeUser();
     loadDrawings();
-    updateBrushPreview(); // İlk yüklemede fırça önizlemesini güncelle
-    showTutorialModal(); // Tutorial modalı göster
+    updateBrushPreview();
+    showTutorialModal();
 });
 
 // Modal'ı açma
