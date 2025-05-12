@@ -26,6 +26,19 @@ header {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+.user-info {
+    background-color: #2A2F4A; /* Solana koyu ton */
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.user-info span {
+    font-size: 1em;
+    color: #14F195; /* Solana mavisi */
+    font-weight: 700;
+}
+
 .navigation {
     display: flex;
     gap: 15px;
