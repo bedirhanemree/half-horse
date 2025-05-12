@@ -252,7 +252,7 @@ if (canvas && ctx) {
     // Çizim devam etme
     canvas.addEventListener('mousemove', (e) => {
         if (drawing) {
-            const rect = canvas.getBoundingRect();
+            const rect = canvas.getBoundingClientRect(); // Düzeltildi: getBoundingRect → getBoundingClientRect
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             console.log('Mouse move:', x, y);
@@ -313,7 +313,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// At görseli ve çizimi birleştirme fonksiyonu
+// At görseli ve çizimi birleştirme fonksiyonu (Görseli küçültülmüş haliyle)
 function combineCanvasWithHorse() {
     console.log('Combining canvas with horse image...');
     if (!canvas || !horseImage) {
@@ -321,9 +321,12 @@ function combineCanvasWithHorse() {
         return null;
     }
 
+    // Küçük bir canvas oluştur (örneğin, 600x400px)
     const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
+    const targetWidth = 600; // Küçük boyut
+    const targetHeight = 400; // Küçük boyut
+    tempCanvas.width = targetWidth;
+    tempCanvas.height = targetHeight;
     const tempCtx = tempCanvas.getContext('2d');
 
     if (!tempCtx) {
@@ -331,28 +334,28 @@ function combineCanvasWithHorse() {
         return null;
     }
 
-    // At görselini çiz
+    // At görselini küçük boyutta çiz
     console.log('Drawing horse image...');
     try {
-        tempCtx.drawImage(horseImage, 0, 0, canvas.width, canvas.height);
+        tempCtx.drawImage(horseImage, 0, 0, targetWidth, targetHeight);
     } catch (err) {
         console.error('Error drawing horse image:', err);
         return null;
     }
 
-    // Kullanıcının çizimini ekle
+    // Kullanıcının çizimini küçük boyutta ekle
     console.log('Drawing canvas content...');
     try {
-        tempCtx.drawImage(canvas, 0, 0);
+        tempCtx.drawImage(canvas, 0, 0, targetWidth, targetHeight);
     } catch (err) {
         console.error('Error drawing canvas content:', err);
         return null;
     }
 
-    // toDataURL ile veri çıkarmayı dene
+    // Küçük boyutta dataURL oluştur
     console.log('Exporting canvas to data URL...');
     try {
-        const dataURL = tempCanvas.toDataURL('image/png');
+        const dataURL = tempCanvas.toDataURL('image/png', 0.7); // Kaliteyi 0.7 olarak ayarladık (daha küçük dosya boyutu)
         console.log('Combined image created:', dataURL.substring(0, 50) + '...');
         return dataURL;
     } catch (err) {
@@ -490,7 +493,13 @@ if (likeDrawingBtn) {
         }
 
         drawings[currentDrawing.index] = drawing;
-        localStorage.setItem('drawings', JSON.stringify(drawings));
+        try {
+            localStorage.setItem('drawings', JSON.stringify(drawings));
+            console.log('Drawings updated in localStorage');
+        } catch (err) {
+            console.error('Failed to save drawings to localStorage:', err);
+            alert('Error saving drawing. LocalStorage might be full.');
+        }
         currentDrawing = { ...drawing, index: currentDrawing.index };
         updateLikesAndComments();
     });
@@ -520,7 +529,13 @@ if (submitCommentBtn) {
 
         drawing.comments.push(newComment);
         drawings[currentDrawing.index] = drawing;
-        localStorage.setItem('drawings', JSON.stringify(drawings));
+        try {
+            localStorage.setItem('drawings', JSON.stringify(drawings));
+            console.log('Drawings updated in localStorage');
+        } catch (err) {
+            console.error('Failed to save drawings to localStorage:', err);
+            alert('Error saving comment. LocalStorage might be full.');
+        }
         currentDrawing = { ...drawing, index: currentDrawing.index };
         commentInput.value = ''; // Yorum alanını temizle
         updateLikesAndComments();
@@ -588,9 +603,13 @@ if (confirmPublishBtn) {
             likes: [],
             comments: []
         });
-        localStorage.setItem('drawings', JSON.stringify(drawings));
-        console.log('Saved drawing to localStorage:', { image: dataURL, title: title, creator: currentUser ? currentUser.username : 'Unknown' });
-
+        try {
+            localStorage.setItem('drawings', JSON.stringify(drawings));
+            console.log('Saved drawing to localStorage:', { image: dataURL, title: title, creator: currentUser ? currentUser.username : 'Unknown' });
+        } catch (err) {
+            console.error('Failed to save drawings to localStorage:', err);
+            alert('Error saving drawing. LocalStorage might be full. Try clearing some drawings.');
+        }
         loadDrawings();
         publishModal.style.display = 'none';
     });
