@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Half-Horse Drawing Challenge</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo">Half-Horse Challenge</div>
+        <nav class="navigation">
+            <a href="index.html" class="nav-link active">Draw</a>
+            <a href="gallery.html" class="nav-link">Gallery</a>
+        </nav>
+        <div class="contract-address">
+            <span>Contract Address: </span>
+            <span id="ca-text">0x1234...5678</span>
+            <button id="copyBtn" class="copy-btn">Copy</button>
+        </div>
+        <div class="banner">Draw, Create, Share!</div>
+    </header>
+    <div class="container">
+        <div class="main-content">
+            <!-- Drawing Area -->
+            <div class="drawing-area">
+                <div class="horse-image">
+                    <img src="assets/half-horse.png" alt="Half Horse" id="half-horse">
+                    <canvas id="drawingCanvas" width="1200" height="800"></canvas>
+                </div>
+            </div>
+
+            <!-- Tools (Toolbar) -->
+            <div class="toolbar">
+                <div class="tool-section">
+                    <button id="clearBtn" class="action-btn">Clear</button>
+                    <button id="publishBtn" class="action-btn publish">Publish!</button>
+                </div>
+                <div class="tool-section">
+                    <h4>Colors</h4>
+                    <div class="color-buttons">
+                        <button class="color-btn" data-color="#000000" style="background-color: #000000;"></button>
+                        <button class="color-btn" data-color="#ff0000" style="background-color: #ff0000;"></button>
+                        <button class="color-btn" data-color="#00ff00" style="background-color: #00ff00;"></button>
+                        <button class="color-btn" data-color="#0000ff" style="background-color: #0000ff;"></button>
+                        <button class="color-btn" data-color="#ff00ff" style="background-color: #ff00ff;"></button>
+                        <button class="color-btn" data-color="#ffff00" style="background-color: #ffff00;"></button>
+                        <button class="color-btn" data-color="#ffa500" style="background-color: #ffa500;"></button>
+                        <button class="color-btn" data-color="#800080" style="background-color: #800080;"></button>
+                    </div>
+                    <input type="color" id="colorPicker" value="#000000">
+                </div>
+                <div class="tool-section">
+                    <h4>Brush Size</h4>
+                    <input type="range" id="brushSize" min="1" max="50" value="5">
+                </div>
+            </div>
+        </div>
+
+        <!-- Published Drawings -->
+        <div class="published-drawings">
+            <h2>Published Creations</h2>
+            <div id="gallery"></div>
+        </div>
+    </div>
+
+    <!-- Modal (Pop-up) -->
+    <div class="modal" id="publishModal">
+        <div class="modal-content">
+            <h3>Publish Your Drawing</h3>
+            <input type="text" id="drawingTitle" placeholder="Enter Title" class="title-input">
+            <img id="drawingPreview" alt="Drawing Preview">
+            <button id="confirmPublishBtn" class="action-btn publish">Publish!</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">About</a> | <a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Contact</a>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

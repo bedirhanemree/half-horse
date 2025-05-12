@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Half-Horse Drawing Challenge - Gallery</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo">Half-Horse Challenge</div>
+        <nav class="navigation">
+            <a href="index.html" class="nav-link">Draw</a>
+            <a href="gallery.html" class="nav-link active">Gallery</a>
+        </nav>
+        <div class="contract-address">
+            <span>Contract Address: </span>
+            <span id="ca-text">0x1234...5678</span>
+            <button id="copyBtn" class="copy-btn">Copy</button>
+        </div>
+        <div class="banner">View Amazing Creations!</div>
+    </header>
+    <div class="container">
+        <div class="published-drawings">
+            <h2>Gallery</h2>
+            <div id="gallery"></div>
+        </div>
+    </div>
+
+    <!-- Modal (Gallery page doesn’t use this, but included for script compatibility) -->
+    <div class="modal" id="publishModal">
+        <div class="modal-content">
+            <h3>Publish Your Drawing</h3>
+            <input type="text" id="drawingTitle" placeholder="Enter Title" class="title-input">
+            <img id="drawingPreview" alt="Drawing Preview">
+            <button id="confirmPublishBtn" class="action-btn publish">Publish!</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">About</a> | <a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Contact</a>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
