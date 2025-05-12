@@ -9,6 +9,11 @@ body {
     background: #1A1F2E; /* Solana koyu arka plan */
     color: #FFFFFF; /* Beyaz metin */
     line-height: 1.6;
+    transition: filter 0.3s; /* Bulanıklık için geçiş efekti */
+}
+
+body.blurred {
+    filter: blur(5px); /* Arka plan bulanıklığı */
 }
 
 /* Header Stilleri */
@@ -370,6 +375,35 @@ header {
     color: #14F195; /* Solana mavisi */
     font-size: 1.5em;
     font-weight: 700;
+}
+
+/* Tutorial Modal Stilleri */
+.tutorial-modal {
+    width: 500px;
+    max-width: 90%;
+}
+
+.rules-list {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    color: #FFFFFF;
+    font-size: 1.1em;
+    line-height: 1.8;
+}
+
+.rules-list li {
+    margin-bottom: 10px;
+}
+
+#closeTutorialBtn {
+    background-color: #14F195; /* Solana mavisi */
+    color: #1A1F2E;
+}
+
+#closeTutorialBtn:hover {
+    background-color: #9945FF; /* Solana moru */
+    color: #FFFFFF;
 }
 
 .title-input {
