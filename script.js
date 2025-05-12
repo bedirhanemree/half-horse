@@ -17,13 +17,20 @@ const confirmPublishBtn = document.getElementById('confirmPublishBtn');
 const horseImage = document.getElementById('half-horse');
 const viewDrawingModal = document.getElementById('viewDrawingModal');
 const viewDrawingTitle = document.getElementById('viewDrawingTitle');
+const viewDrawingCreator = document.getElementById('viewDrawingCreator');
 const viewDrawingImage = document.getElementById('viewDrawingImage');
 const usernameDisplay = document.getElementById('usernameDisplay');
+const likeDrawingBtn = document.getElementById('likeDrawingBtn');
+const likeCount = document.getElementById('likeCount');
+const commentsList = document.getElementById('commentsList');
+const commentInput = document.getElementById('commentInput');
+const submitCommentBtn = document.getElementById('submitCommentBtn');
 
 let drawing = false;
 let currentColor = colorPicker ? colorPicker.value : '#000000';
 let undoHistory = [];
 let currentUser = null; // Şu anki kullanıcıyı saklamak için
+let currentDrawing = null; // Şu an görüntülenen çizimi saklamak için
 
 // Elementlerin varlığını kontrol et
 console.log('Canvas:', canvas);
@@ -36,6 +43,8 @@ console.log('Confirm Publish Button:', confirmPublishBtn);
 console.log('Horse Image:', horseImage);
 console.log('View Drawing Modal:', viewDrawingModal);
 console.log('Username Display:', usernameDisplay);
+console.log('Like Drawing Button:', likeDrawingBtn);
+console.log('Comments List:', commentsList);
 
 // Horse image için CORS ayarı
 if (horseImage) {
@@ -319,7 +328,7 @@ function loadDrawings() {
         return;
     }
 
-    drawings.forEach(drawing => {
+    drawings.forEach((drawing, index) => {
         console.log('Rendering drawing:', drawing);
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
@@ -329,24 +338,139 @@ function loadDrawings() {
         img.onerror = () => console.error('Failed to load image:', drawing.image);
         galleryItem.appendChild(img);
 
+        const creator = document.createElement('p');
+        creator.className = 'creator';
+        creator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
+        galleryItem.appendChild(creator);
+
         const title = document.createElement('p');
+        title.className = 'title';
         title.textContent = drawing.title || 'Untitled';
-        console.log('Rendering title:', drawing.title || 'Untitled');
         galleryItem.appendChild(title);
 
         // Galerideki resme tıklama eventi
         galleryItem.addEventListener('click', () => {
             console.log('Gallery item clicked:', drawing.title);
-            if (viewDrawingModal && viewDrawingImage && viewDrawingTitle) {
+            if (viewDrawingModal && viewDrawingImage && viewDrawingTitle && viewDrawingCreator) {
+                currentDrawing = { ...drawing, index }; // Çizim ve indeksini sakla
                 viewDrawingImage.src = drawing.image;
                 viewDrawingTitle.textContent = drawing.title || 'Untitled';
+                viewDrawingCreator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
                 viewDrawingModal.style.display = 'flex';
+
+                // Beğeni ve yorumları güncelle
+                updateLikesAndComments();
             } else {
                 console.error('View drawing modal elements not found.');
             }
         });
 
         gallery.appendChild(galleryItem);
+    });
+}
+
+// Beğeni ve yorumları güncelleme
+function updateLikesAndComments() {
+    if (!currentDrawing || !likeCount || !commentsList || !likeDrawingBtn) return;
+
+    // Beğeni sayısını güncelle
+    const likes = currentDrawing.likes || [];
+    likeCount.textContent = likes.length;
+    if (currentUser && likes.includes(currentUser.userId)) {
+        likeDrawingBtn.classList.add('liked');
+    } else {
+        likeDrawingBtn.classList.remove('liked');
+    }
+
+    // Yorumları göster
+    commentsList.innerHTML = '';
+    const comments = currentDrawing.comments || [];
+    if (comments.length === 0) {
+        const noComments = document.createElement('p');
+        noComments.textContent = 'No comments yet.';
+        noComments.style.color = '#999';
+        commentsList.appendChild(noComments);
+    } else {
+        comments.forEach(comment => {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment';
+
+            const username = document.createElement('span');
+            username.className = 'username';
+            username.textContent = comment.username;
+            commentDiv.appendChild(username);
+
+            const timestamp = document.createElement('span');
+            timestamp.className = 'timestamp';
+            timestamp.textContent = ` (${new Date(comment.timestamp).toLocaleString()})`;
+            commentDiv.appendChild(timestamp);
+
+            const text = document.createElement('p');
+            text.className = 'text';
+            text.textContent = comment.comment;
+            commentDiv.appendChild(text);
+
+            commentsList.appendChild(commentDiv);
+        });
+    }
+}
+
+// Beğenme işlemi
+if (likeDrawingBtn) {
+    likeDrawingBtn.addEventListener('click', () => {
+        if (!currentUser || !currentDrawing) return;
+
+        const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
+        const drawing = drawings[currentDrawing.index];
+        if (!drawing.likes) drawing.likes = [];
+
+        const userId = currentUser.userId;
+        const index = drawing.likes.indexOf(userId);
+
+        if (index === -1) {
+            drawing.likes.push(userId); // Beğen
+            console.log('Liked drawing:', drawing.title);
+        } else {
+            drawing.likes.splice(index, 1); // Beğeniyi kaldır
+            console.log('Unliked drawing:', drawing.title);
+        }
+
+        drawings[currentDrawing.index] = drawing;
+        localStorage.setItem('drawings', JSON.stringify(drawings));
+        currentDrawing = { ...drawing, index: currentDrawing.index };
+        updateLikesAndComments();
+    });
+}
+
+// Yorum yapma işlemi
+if (submitCommentBtn) {
+    submitCommentBtn.addEventListener('click', () => {
+        if (!currentUser || !currentDrawing || !commentInput) return;
+
+        const commentText = commentInput.value.trim();
+        if (!commentText) {
+            alert('Please write a comment before submitting.');
+            return;
+        }
+
+        const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
+        const drawing = drawings[currentDrawing.index];
+        if (!drawing.comments) drawing.comments = [];
+
+        const newComment = {
+            userId: currentUser.userId,
+            username: currentUser.username,
+            comment: commentText,
+            timestamp: new Date().toISOString()
+        };
+
+        drawing.comments.push(newComment);
+        drawings[currentDrawing.index] = drawing;
+        localStorage.setItem('drawings', JSON.stringify(drawings));
+        currentDrawing = { ...drawing, index: currentDrawing.index };
+        commentInput.value = ''; // Yorum alanını temizle
+        updateLikesAndComments();
+        console.log('Comment added:', newComment);
     });
 }
 
@@ -402,9 +526,15 @@ if (confirmPublishBtn) {
         const title = drawingTitle.value.trim() || 'Untitled';
 
         const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-        drawings.push({ image: dataURL, title: title });
+        drawings.push({
+            image: dataURL,
+            title: title,
+            creator: currentUser ? currentUser.username : 'Unknown',
+            likes: [],
+            comments: []
+        });
         localStorage.setItem('drawings', JSON.stringify(drawings));
-        console.log('Saved drawing to localStorage:', { image: dataURL, title: title });
+        console.log('Saved drawing to localStorage:', { image: dataURL, title: title, creator: currentUser ? currentUser.username : 'Unknown' });
 
         loadDrawings();
         publishModal.style.display = 'none';
