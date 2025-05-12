@@ -19,11 +19,6 @@ const viewDrawingModal = document.getElementById('viewDrawingModal');
 const viewDrawingTitle = document.getElementById('viewDrawingTitle');
 const viewDrawingImage = document.getElementById('viewDrawingImage');
 const usernameDisplay = document.getElementById('usernameDisplay');
-const likeDrawingBtn = document.getElementById('likeDrawingBtn');
-const likeCount = document.getElementById('likeCount');
-const commentsList = document.getElementById('commentsList');
-const commentInput = document.getElementById('commentInput');
-const submitCommentBtn = document.getElementById('submitCommentBtn');
 
 let drawing = false;
 let currentColor = colorPicker ? colorPicker.value : '#000000';
