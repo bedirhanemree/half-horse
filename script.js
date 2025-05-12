@@ -2,6 +2,7 @@
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 const clearBtn = document.getElementById('clearBtn');
+const undoBtn = document.getElementById('undoBtn');
 const publishBtn = document.getElementById('publishBtn');
 const colorPicker = document.getElementById('colorPicker');
 const brushSize = document.getElementById('brushSize');
@@ -14,9 +15,13 @@ const drawingPreview = document.getElementById('drawingPreview');
 const drawingTitle = document.getElementById('drawingTitle');
 const confirmPublishBtn = document.getElementById('confirmPublishBtn');
 const horseImage = document.getElementById('half-horse');
+const viewDrawingModal = document.getElementById('viewDrawingModal');
+const viewDrawingTitle = document.getElementById('viewDrawingTitle');
+const viewDrawingImage = document.getElementById('viewDrawingImage');
 
 let drawing = false;
 let currentColor = colorPicker ? colorPicker.value : '#000000';
+let undoHistory = []; // Çizim geçmişini saklamak için
 
 // Elementlerin varlığını kontrol et
 console.log('Canvas:', canvas);
@@ -26,6 +31,15 @@ console.log('Publish Modal:', publishModal);
 console.log('Drawing Preview:', drawingPreview);
 console.log('Drawing Title:', drawingTitle);
 console.log('Confirm Publish Button:', confirmPublishBtn);
+console.log('Horse Image:', horseImage);
+console.log('View Drawing Modal:', viewDrawingModal);
+
+// Horse image için CORS ayarı
+if (horseImage) {
+    horseImage.crossOrigin = 'anonymous';
+    horseImage.onload = () => console.log('Horse image loaded successfully.');
+    horseImage.onerror = () => console.error('Failed to load horse image.');
+}
 
 // Canvas ve bağlam kontrolü
 if (!canvas || !ctx) {
@@ -34,6 +48,35 @@ if (!canvas || !ctx) {
     console.log('Canvas and context initialized successfully.');
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
+    saveCanvasState(); // İlk durumu kaydet
+}
+
+// Canvas durumunu kaydetme fonksiyonu (Undo için)
+function saveCanvasState() {
+    undoHistory.push(canvas.toDataURL());
+    console.log('Canvas state saved. History length:', undoHistory.length);
+    if (undoHistory.length > 50) {
+        undoHistory.shift(); // Bellek kullanımı için sınırı 50 adımda tut
+    }
+}
+
+// Canvas durumunu geri yükleme fonksiyonu (Undo için)
+function undoLastAction() {
+    if (undoHistory.length <= 1) {
+        console.log('Nothing to undo.');
+        return;
+    }
+
+    undoHistory.pop(); // Son durumu çıkar
+    const lastState = undoHistory[undoHistory.length - 1];
+    console.log('Undoing last action. History length:', undoHistory.length);
+
+    const img = new Image();
+    img.src = lastState;
+    img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+    };
 }
 
 // Renk butonlarına tıklama eventi
@@ -89,6 +132,7 @@ if (canvas && ctx) {
         console.log('Mouse up');
         drawing = false;
         ctx.closePath();
+        saveCanvasState(); // Çizim tamamlandığında durumu kaydet
     });
 
     // Çizimi canvas dışına çıkıldığında durdur
@@ -97,6 +141,7 @@ if (canvas && ctx) {
             console.log('Mouse leave');
             drawing = false;
             ctx.closePath();
+            saveCanvasState(); // Çizim tamamlandığında durumu kaydet
         }
     });
 }
@@ -106,8 +151,25 @@ if (clearBtn && ctx) {
     clearBtn.addEventListener('click', () => {
         console.log('Clearing canvas');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        saveCanvasState(); // Temizleme sonrası durumu kaydet
     });
 }
+
+// Undo butonu
+if (undoBtn) {
+    undoBtn.addEventListener('click', () => {
+        undoLastAction();
+    });
+}
+
+// Ctrl+Z ile geri alma
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'z') {
+        console.log('Ctrl+Z pressed');
+        e.preventDefault(); // Varsayılan tarayıcı davranışını engelle
+        undoLastAction();
+    }
+});
 
 // At görseli ve çizimi birleştirme fonksiyonu
 function combineCanvasWithHorse() {
@@ -129,15 +191,32 @@ function combineCanvasWithHorse() {
 
     // At görselini çiz
     console.log('Drawing horse image...');
-    tempCtx.drawImage(horseImage, 0, 0, canvas.width, canvas.height);
+    try {
+        tempCtx.drawImage(horseImage, 0, 0, canvas.width, canvas.height);
+    } catch (err) {
+        console.error('Error drawing horse image:', err);
+        return null;
+    }
 
     // Kullanıcının çizimini ekle
     console.log('Drawing canvas content...');
-    tempCtx.drawImage(canvas, 0, 0);
+    try {
+        tempCtx.drawImage(canvas, 0, 0);
+    } catch (err) {
+        console.error('Error drawing canvas content:', err);
+        return null;
+    }
 
-    const dataURL = tempCanvas.toDataURL('image/png');
-    console.log('Combined image created:', dataURL.substring(0, 50) + '...');
-    return dataURL;
+    // toDataURL ile veri çıkarmayı dene
+    console.log('Exporting canvas to data URL...');
+    try {
+        const dataURL = tempCanvas.toDataURL('image/png');
+        console.log('Combined image created:', dataURL.substring(0, 50) + '...');
+        return dataURL;
+    } catch (err) {
+        console.error('Failed to export canvas to data URL:', err);
+        return null;
+    }
 }
 
 // Çizimleri localStorage’dan yükleme
@@ -175,6 +254,18 @@ function loadDrawings() {
         title.textContent = drawing.title || 'Untitled';
         console.log('Rendering title:', drawing.title || 'Untitled');
         galleryItem.appendChild(title);
+
+        // Galerideki resme tıklama eventi
+        galleryItem.addEventListener('click', () => {
+            console.log('Gallery item clicked:', drawing.title);
+            if (viewDrawingModal && viewDrawingImage && viewDrawingTitle) {
+                viewDrawingImage.src = drawing.image;
+                viewDrawingTitle.textContent = drawing.title || 'Untitled';
+                viewDrawingModal.style.display = 'flex';
+            } else {
+                console.error('View drawing modal elements not found.');
+            }
+        });
 
         gallery.appendChild(galleryItem);
     });
@@ -240,12 +331,21 @@ if (confirmPublishBtn) {
     });
 }
 
-// Modal dışında tıklayınca kapatma
+// Modal dışında tıklayınca kapatma (her iki modal için)
 if (publishModal) {
     window.addEventListener('click', (e) => {
         if (e.target === publishModal) {
-            console.log('Closing modal by clicking outside.');
+            console.log('Closing publish modal by clicking outside.');
             publishModal.style.display = 'none';
+        }
+    });
+}
+
+if (viewDrawingModal) {
+    window.addEventListener('click', (e) => {
+        if (e.target === viewDrawingModal) {
+            console.log('Closing view drawing modal by clicking outside.');
+            viewDrawingModal.style.display = 'none';
         }
     });
 }
