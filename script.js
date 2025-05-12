@@ -27,6 +27,8 @@ const likeCount = document.getElementById('likeCount');
 const commentsList = document.getElementById('commentsList');
 const commentInput = document.getElementById('commentInput');
 const submitCommentBtn = document.getElementById('submitCommentBtn');
+const tutorialModal = document.getElementById('tutorialModal');
+const closeTutorialBtn = document.getElementById('closeTutorialBtn');
 
 let drawing = false;
 let currentColor = colorPicker ? colorPicker.value : '#000000';
@@ -50,6 +52,8 @@ console.log('View Drawing Modal:', viewDrawingModal);
 console.log('Username Display:', usernameDisplay);
 console.log('Like Drawing Button:', likeDrawingBtn);
 console.log('Comments List:', commentsList);
+console.log('Tutorial Modal:', tutorialModal);
+console.log('Close Tutorial Button:', closeTutorialBtn);
 
 // Horse image için CORS ayarı
 if (horseImage) {
@@ -186,6 +190,49 @@ function updateBrushPreview() {
     }
 }
 
+// Tutorial Modal kontrolü
+function showTutorialModal() {
+    // localStorage'dan kontrol et, kullanıcı daha önce modalı gördü mü?
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
+    if (hasSeenTutorial === 'true') {
+        console.log('User has already seen the tutorial.');
+        return; // Eğer gördüyse modalı gösterme
+    }
+
+    // Modal'ı göster ve arka planı bulanık yap
+    if (tutorialModal) {
+        tutorialModal.style.display = 'flex';
+        document.body.classList.add('blurred');
+        console.log('Showing tutorial modal');
+    }
+}
+
+// Tutorial Modal'ı kapatma
+if (closeTutorialBtn) {
+    closeTutorialBtn.addEventListener('click', () => {
+        if (tutorialModal) {
+            tutorialModal.style.display = 'none';
+            document.body.classList.remove('blurred');
+            // Kullanıcının modalı gördüğünü localStorage'a kaydet
+            localStorage.setItem('hasSeenTutorial', 'true');
+            console.log('Tutorial modal closed, saved to localStorage');
+        }
+    });
+}
+
+// Modal dışında tıklayınca kapatma (tutorial modal için)
+if (tutorialModal) {
+    window.addEventListener('click', (e) => {
+        if (e.target === tutorialModal) {
+            tutorialModal.style.display = 'none';
+            document.body.classList.remove('blurred');
+            // Kullanıcının modalı gördüğünü localStorage'a kaydet
+            localStorage.setItem('hasSeenTutorial', 'true');
+            console.log('Tutorial modal closed by clicking outside, saved to localStorage');
+        }
+    });
+}
+
 // Renk butonlarına tıklama eventi
 if (colorButtons) {
     colorButtons.forEach(button => {
@@ -252,7 +299,7 @@ if (canvas && ctx) {
     // Çizim devam etme
     canvas.addEventListener('mousemove', (e) => {
         if (drawing) {
-            const rect = canvas.getBoundingClientRect(); // Düzeltildi: getBoundingRect → getBoundingClientRect
+            const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             console.log('Mouse move:', x, y);
@@ -549,6 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeUser();
     loadDrawings();
     updateBrushPreview(); // İlk yüklemede fırça önizlemesini güncelle
+    showTutorialModal(); // Tutorial modalı göster
 });
 
 // Modal'ı açma
