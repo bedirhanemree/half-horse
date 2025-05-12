@@ -1,15 +1,17 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     font-family: 'Comic Neue', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
     background: #1A1F2E; /* Solana koyu arka plan */
     color: #FFFFFF; /* Beyaz metin */
+    line-height: 1.6;
 }
 
+/* Header Stilleri */
 header {
     display: flex;
     justify-content: space-between;
@@ -103,6 +105,7 @@ header {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+/* Container ve Main Content */
 .container {
     max-width: 1600px;
     margin: 20px auto;
@@ -116,6 +119,7 @@ header {
     justify-content: center;
 }
 
+/* Çizim Alanı */
 .drawing-area {
     flex: 1;
     max-width: 1200px;
@@ -152,6 +156,7 @@ header {
     height: 100%;
 }
 
+/* Toolbar */
 .toolbar {
     width: 220px;
     background-color: #2A2F4A; /* Solana koyu ton */
@@ -199,7 +204,7 @@ header {
 }
 
 .action-btn:nth-child(2) {
-    background-color: #ff6f61; /* Undo butonu için farklı bir renk (kırmızı tonu) */
+    background-color: #ff6f61; /* Undo butonu için kırmızı ton */
     color: #FFFFFF;
 }
 
@@ -245,6 +250,7 @@ header {
     accent-color: #9945FF; /* Solana moru */
 }
 
+/* Galeri Bölümü */
 .published-drawings {
     background-color: #2A2F4A; /* Solana koyu ton */
     padding: 20px;
@@ -265,25 +271,27 @@ header {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 15px;
+    gap: 20px; /* Öğeler arasında daha fazla boşluk */
 }
 
 .gallery-item {
     text-align: center;
-    max-width: 150px;
+    width: 300px; /* Sabit genişlik */
     cursor: pointer; /* Küçük resimlere tıklanabilir olduğunu göstermek için */
 }
 
-.gallery-item img {
+#gallery .gallery-item img {
     width: 300px;
-    height: 150px; /* 1:2 oranı */
-    object-fit: cover;
+    height: 200px; /* 3:2 oranı, yatay (300 / 200 = 1.5) */
+    object-fit: cover; /* Resmi alanı dolduracak şekilde kırp */
+    background-color: #1A1F2E; /* Arka plan rengi */
     border-radius: 15px;
     border: 2px solid #9945FF; /* Solana moru */
     transition: transform 0.3s;
+    display: block; /* Resmin blok öğesi olduğundan emin ol */
 }
 
-.gallery-item img:hover {
+#gallery .gallery-item img:hover {
     transform: scale(1.05);
 }
 
@@ -294,6 +302,10 @@ header {
     font-weight: 600;
     word-wrap: break-word;
     display: block;
+    width: 100%; /* Taşmayı önlemek için */
+    overflow: hidden; /* Taşan metni gizle */
+    text-overflow: ellipsis; /* Taşan metni üç nokta ile göster */
+    white-space: nowrap; /* Metni tek satırda tut */
 }
 
 .gallery-item .title {
@@ -303,9 +315,13 @@ header {
     font-weight: 600;
     word-wrap: break-word;
     display: block;
+    width: 100%; /* Taşmayı önlemek için */
+    overflow: hidden; /* Taşan metni gizle */
+    text-overflow: ellipsis; /* Taşan metni üç nokta ile göster */
+    white-space: nowrap; /* Metni tek satırda tut */
 }
 
-/* Modal Styles */
+/* Modal Stilleri */
 .modal {
     display: none;
     position: fixed;
@@ -357,7 +373,7 @@ header {
     border: 2px solid #9945FF; /* Solana moru */
 }
 
-/* View Drawing Modal Styles */
+/* View Drawing Modal Stilleri */
 .view-drawing-modal {
     width: 600px;
     max-width: 90%;
@@ -451,6 +467,7 @@ header {
     resize: none;
 }
 
+/* Footer Stilleri */
 footer {
     text-align: center;
     padding: 20px;
