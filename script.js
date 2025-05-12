@@ -18,10 +18,17 @@ const horseImage = document.getElementById('half-horse');
 const viewDrawingModal = document.getElementById('viewDrawingModal');
 const viewDrawingTitle = document.getElementById('viewDrawingTitle');
 const viewDrawingImage = document.getElementById('viewDrawingImage');
+const usernameDisplay = document.getElementById('usernameDisplay');
+const likeDrawingBtn = document.getElementById('likeDrawingBtn');
+const likeCount = document.getElementById('likeCount');
+const commentsList = document.getElementById('commentsList');
+const commentInput = document.getElementById('commentInput');
+const submitCommentBtn = document.getElementById('submitCommentBtn');
 
 let drawing = false;
 let currentColor = colorPicker ? colorPicker.value : '#000000';
-let undoHistory = []; // Çizim geçmişini saklamak için
+let undoHistory = [];
+let currentUser = null; // Şu anki kullanıcıyı saklamak için
 
 // Elementlerin varlığını kontrol et
 console.log('Canvas:', canvas);
@@ -33,12 +40,89 @@ console.log('Drawing Title:', drawingTitle);
 console.log('Confirm Publish Button:', confirmPublishBtn);
 console.log('Horse Image:', horseImage);
 console.log('View Drawing Modal:', viewDrawingModal);
+console.log('Username Display:', usernameDisplay);
 
 // Horse image için CORS ayarı
 if (horseImage) {
     horseImage.crossOrigin = 'anonymous';
     horseImage.onload = () => console.log('Horse image loaded successfully.');
     horseImage.onerror = () => console.error('Failed to load horse image.');
+}
+
+// Kullanıcı adı oluşturma için kelime havuzu
+const wordPool = [
+    'Horny', 'Hippo', 'Satoshi', 'Moon', 'Lad', 'Tits', 'Wanker', 'Hodl', 'Balls', 'Rekt',
+    'Crypto', 'Shill', 'Fomo', 'Whale', 'Pump', 'Dump', 'Degen', 'Rug', 'Scam', 'Bag',
+    'Diamond', 'Paper', 'Hands', 'Chad', 'Virgin', 'Toad', 'Pepe', 'Kek', 'Lmao', 'Noob',
+    'Pleb', 'Maxi', 'Shit', 'Coin', 'Bull', 'Bear', 'Ape', 'NGMI', 'GM', 'GN',
+    'Fren', 'Ser', 'Wen', 'Lambo', 'Stonk', 'Bitch', 'Dick', 'Ass', 'Booty', 'Thot'
+];
+
+// SHA-256 hash fonksiyonu (basit bir implementasyon)
+async function sha256(str) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(str);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+// Rastgele kullanıcı adı oluşturma
+function generateRandomUsername() {
+    const word1 = wordPool[Math.floor(Math.random() * wordPool.length)];
+    const word2 = wordPool[Math.floor(Math.random() * wordPool.length)];
+    // 1 ile 100 arasında rastgele bir sayı
+    const number = Math.floor(Math.random() * 100) + 1;
+    return `${word1}${word2}${number}`;
+}
+
+// IP adresini alma ve kullanıcı oluşturma
+async function initializeUser() {
+    // localStorage'dan mevcut kullanıcıyı kontrol et
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+        currentUser = JSON.parse(storedUser);
+        console.log('User loaded from localStorage:', currentUser);
+        if (usernameDisplay) {
+            usernameDisplay.textContent = currentUser.username;
+        }
+        return;
+    }
+
+    try {
+        // IP adresini al
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        const ip = data.ip;
+        console.log('IP address fetched:', ip);
+
+        // IP adresini hash'le
+        const userId = await sha256(ip);
+        console.log('User ID (hashed IP):', userId);
+
+        // Rastgele kullanıcı adı oluştur
+        const username = generateRandomUsername();
+        console.log('Generated username:', username);
+
+        // Kullanıcıyı sakla
+        currentUser = { userId, username };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        console.log('User saved to localStorage:', currentUser);
+
+        // Kullanıcı adını göster
+        if (usernameDisplay) {
+            usernameDisplay.textContent = currentUser.username;
+        }
+    } catch (err) {
+        console.error('Failed to fetch IP or generate user:', err);
+        // Hata durumunda varsayılan bir isim
+        currentUser = { userId: 'guest', username: 'GuestUser' + (Math.floor(Math.random() * 100) + 1) };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        if (usernameDisplay) {
+            usernameDisplay.textContent = currentUser.username;
+        }
+    }
 }
 
 // Canvas ve bağlam kontrolü
@@ -271,9 +355,10 @@ function loadDrawings() {
     });
 }
 
-// Sayfalar yüklendiğinde çizimleri yükle
+// Sayfalar yüklendiğinde çizimleri yükle ve kullanıcıyı başlat
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Page loaded, loading drawings...');
+    console.log('Page loaded, initializing user and loading drawings...');
+    initializeUser();
     loadDrawings();
 });
 
