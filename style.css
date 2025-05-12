@@ -14,18 +14,22 @@ body {
 /* Header Stilleri */
 header {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap; /* Küçük ekranlarda taşmayı önlemek için */
     align-items: center;
-    padding: 20px 40px;
+    justify-content: space-between;
+    padding: 15px 30px;
     background: linear-gradient(90deg, #9945FF, #14F195); /* Solana mor ve mavi gradyan */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    gap: 15px; /* Öğeler arasında boşluk */
 }
 
 .logo {
-    font-size: 2em;
+    font-size: 1.8em;
     font-weight: 700;
     color: #FFFFFF;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    flex: 1 1 200px; /* Logo için sabit bir alan */
+    text-align: left;
 }
 
 .user-info {
@@ -33,6 +37,8 @@ header {
     padding: 8px 15px;
     border-radius: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    flex: 1 1 auto;
+    text-align: center;
 }
 
 .user-info span {
@@ -43,11 +49,13 @@ header {
 
 .navigation {
     display: flex;
-    gap: 15px;
+    gap: 10px;
+    flex: 1 1 auto;
+    justify-content: center;
 }
 
 .nav-link {
-    padding: 10px 20px;
+    padding: 8px 15px;
     background-color: #9945FF; /* Solana moru */
     color: #FFFFFF;
     text-decoration: none;
@@ -68,15 +76,17 @@ header {
 .contract-address {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     background-color: #FFFFFF;
-    padding: 8px 15px;
+    padding: 8px 12px;
     border-radius: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    flex: 1 1 auto;
+    justify-content: center;
 }
 
 .contract-address span {
-    font-size: 1em;
+    font-size: 0.9em;
     color: #9945FF; /* Solana moru */
     font-weight: 700;
 }
@@ -98,11 +108,13 @@ header {
 .banner {
     background-color: #9945FF; /* Solana moru */
     color: #FFFFFF;
-    padding: 10px 20px;
+    padding: 8px 15px;
     border-radius: 20px;
     font-weight: 700;
     text-transform: uppercase;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    flex: 1 1 auto;
+    text-align: center;
 }
 
 /* Container ve Main Content */
@@ -206,6 +218,11 @@ header {
 .action-btn:nth-child(2) {
     background-color: #ff6f61; /* Undo butonu için kırmızı ton */
     color: #FFFFFF;
+}
+
+.action-btn:nth-child(3) {
+    background-color: #FFD700; /* Eraser butonu için sarı ton */
+    color: #1A1F2E;
 }
 
 .action-btn.publish {
