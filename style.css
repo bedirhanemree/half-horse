@@ -9,28 +9,31 @@ body {
     background: #1A1F2E; /* Solana koyu arka plan */
     color: #FFFFFF; /* Beyaz metin */
     line-height: 1.6;
-    transition: filter 0.3s; /* Bulanıklık için geçiş efekti */
-}
-
-body.blurred {
-    filter: blur(5px); /* Arka plan bulanıklığı */
 }
 
 /* Header Stilleri */
 header {
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
     padding: 15px 30px;
-    background: #1A1F2E; /* Daha profesyonel bir koyu ton */
-    border-bottom: 2px solid #9945FF; /* Solana moru alt çizgi */
+    background: #1A1F2E;
+    border-bottom: 2px solid #9945FF;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1600px;
 }
 
 .logo {
     font-size: 1.8em;
     font-weight: 700;
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: color 0.3s;
@@ -40,8 +43,14 @@ header {
     color: #FFFFFF;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
 .user-info {
-    background-color: #2A2F4A; /* Solana koyu ton */
+    background-color: #2A2F4A;
     padding: 6px 12px;
     border-radius: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -49,7 +58,7 @@ header {
 
 .user-info span {
     font-size: 0.9em;
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
     font-weight: 600;
 }
 
@@ -69,12 +78,12 @@ header {
 }
 
 .nav-link:hover {
-    background-color: #9945FF; /* Solana moru */
+    background-color: #9945FF;
     color: #FFFFFF;
 }
 
 .nav-link.active {
-    background-color: #14F195; /* Solana mavisi */
+    background-color: #14F195;
     color: #1A1F2E;
 }
 
@@ -96,7 +105,7 @@ header {
 
 .copy-btn {
     padding: 5px 10px;
-    background-color: #14F195; /* Solana mavisi */
+    background-color: #14F195;
     color: #1A1F2E;
     border: none;
     border-radius: 10px;
@@ -106,7 +115,7 @@ header {
 }
 
 .copy-btn:hover {
-    background-color: #9945FF; /* Solana moru */
+    background-color: #9945FF;
     color: #FFFFFF;
 }
 
@@ -152,7 +161,7 @@ header {
 }
 
 #drawingCanvas {
-    border: 2px solid #9945FF; /* Solana moru */
+    border: 2px solid #9945FF;
     background: transparent;
     z-index: 2;
     position: relative;
@@ -164,7 +173,7 @@ header {
 /* Toolbar */
 .toolbar {
     width: 220px;
-    background-color: #2A2F4A; /* Solana koyu ton */
+    background-color: #2A2F4A;
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -179,7 +188,7 @@ header {
 
 .tool-section h4 {
     margin: 0 0 10px;
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
     font-size: 1.2em;
     font-weight: 700;
 }
@@ -204,22 +213,22 @@ header {
 }
 
 .action-btn:nth-child(1) {
-    background-color: #14F195; /* Solana mavisi */
+    background-color: #14F195;
     color: #1A1F2E;
 }
 
 .action-btn:nth-child(2) {
-    background-color: #ff6f61; /* Undo butonu için kırmızı ton */
+    background-color: #ff6f61;
     color: #FFFFFF;
 }
 
 .action-btn:nth-child(3) {
-    background-color: #FFD700; /* Eraser butonu için sarı ton */
+    background-color: #FFD700;
     color: #1A1F2E;
 }
 
 .action-btn.publish {
-    background-color: #9945FF; /* Solana moru */
+    background-color: #9945FF;
     color: #FFFFFF;
 }
 
@@ -245,7 +254,7 @@ header {
 }
 
 .color-btn.active {
-    border: 3px solid #14F195; /* Solana mavisi */
+    border: 3px solid #14F195;
 }
 
 .toolbar input[type="color"] {
@@ -257,14 +266,14 @@ header {
 
 .toolbar input[type="range"] {
     width: 100%;
-    accent-color: #9945FF; /* Solana moru */
+    accent-color: #9945FF;
     margin: 10px 0;
 }
 
 .brush-preview {
     width: 50px;
     height: 50px;
-    background-color: rgba(255, 255, 255, 0.3); /* Hafif saydam */
+    background-color: rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     margin: 10px auto;
     display: flex;
@@ -275,7 +284,7 @@ header {
 
 /* Galeri Bölümü */
 .published-drawings {
-    background-color: #2A2F4A; /* Solana koyu ton */
+    background-color: #2A2F4A;
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -284,7 +293,7 @@ header {
 
 .published-drawings h2 {
     margin-top: 0;
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
     font-size: 1.8em;
     font-weight: 700;
     text-align: center;
@@ -294,24 +303,24 @@ header {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px; /* Öğeler arasında daha fazla boşluk */
+    gap: 20px;
 }
 
 .gallery-item {
     text-align: center;
-    width: 300px; /* Sabit genişlik */
-    cursor: pointer; /* Küçük resimlere tıklanabilir olduğunu göstermek için */
+    width: 300px;
+    cursor: pointer;
 }
 
 #gallery .gallery-item img {
     width: 300px;
-    height: 200px; /* 3:2 oranı, yatay (300 / 200 = 1.5) */
-    object-fit: cover; /* Resmi alanı dolduracak şekilde kırp */
-    background-color: #1A1F2E; /* Arka plan rengi */
+    height: 200px;
+    object-fit: cover;
+    background-color: #1A1F2E;
     border-radius: 15px;
-    border: 2px solid #9945FF; /* Solana moru */
+    border: 2px solid #9945FF;
     transition: transform 0.3s;
-    display: block; /* Resmin blok öğesi olduğundan emin ol */
+    display: block;
 }
 
 #gallery .gallery-item img:hover {
@@ -321,27 +330,27 @@ header {
 .gallery-item .creator {
     margin: 5px 0 0;
     font-size: 12px;
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
     font-weight: 600;
     word-wrap: break-word;
     display: block;
-    width: 100%; /* Taşmayı önlemek için */
-    overflow: hidden; /* Taşan metni gizle */
-    text-overflow: ellipsis; /* Taşan metni üç nokta ile göster */
-    white-space: nowrap; /* Metni tek satırda tut */
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .gallery-item .title {
     margin: 2px 0 0;
     font-size: 14px;
-    color: #FFFFFF; /* Beyaz metin */
+    color: #FFFFFF;
     font-weight: 600;
     word-wrap: break-word;
     display: block;
-    width: 100%; /* Taşmayı önlemek için */
-    overflow: hidden; /* Taşan metni gizle */
-    text-overflow: ellipsis; /* Taşan metni üç nokta ile göster */
-    white-space: nowrap; /* Metni tek satırda tut */
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Modal Stilleri */
@@ -355,24 +364,28 @@ header {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Yukarıda hizalamak için */
+    padding-top: 100px; /* Biraz daha yukarıda durması için */
 }
 
 .modal-content {
-    background-color: #2A2F4A; /* Solana koyu ton */
+    background-color: #2A2F4A;
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    width: 400px;
+    width: 500px;
+    max-width: 90%;
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 15px;
+    position: relative;
+    z-index: 1001; /* Modal içeriği en üstte olsun */
 }
 
 .modal-content h3 {
     margin: 0;
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
     font-size: 1.5em;
     font-weight: 700;
 }
@@ -397,12 +410,12 @@ header {
 }
 
 #closeTutorialBtn {
-    background-color: #14F195; /* Solana mavisi */
+    background-color: #14F195;
     color: #1A1F2E;
 }
 
 #closeTutorialBtn:hover {
-    background-color: #9945FF; /* Solana moru */
+    background-color: #9945FF;
     color: #FFFFFF;
 }
 
@@ -410,7 +423,7 @@ header {
     width: 100%;
     padding: 10px;
     font-size: 16px;
-    border: 2px solid #9945FF; /* Solana moru */
+    border: 2px solid #9945FF;
     border-radius: 10px;
     outline: none;
     background-color: #1A1F2E;
@@ -422,7 +435,7 @@ header {
     height: 200px;
     object-fit: cover;
     border-radius: 15px;
-    border: 2px solid #9945FF; /* Solana moru */
+    border: 2px solid #9945FF;
 }
 
 /* View Drawing Modal Stilleri */
@@ -434,7 +447,7 @@ header {
 #viewDrawingCreator {
     margin: 5px 0 0;
     font-size: 14px;
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
     font-weight: 600;
 }
 
@@ -443,7 +456,7 @@ header {
     max-height: 400px;
     object-fit: contain;
     border-radius: 15px;
-    border: 2px solid #9945FF; /* Solana moru */
+    border: 2px solid #9945FF;
 }
 
 .interaction-section {
@@ -454,12 +467,12 @@ header {
 }
 
 #likeDrawingBtn {
-    background-color: #14F195; /* Solana mavisi */
+    background-color: #14F195;
     color: #1A1F2E;
 }
 
 #likeDrawingBtn.liked {
-    background-color: #ff6f61; /* Beğenildiğinde kırmızı ton */
+    background-color: #ff6f61;
     color: #FFFFFF;
 }
 
@@ -471,7 +484,7 @@ header {
 
 .comments-section h4 {
     margin: 0;
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
     font-size: 1.2em;
 }
 
@@ -481,18 +494,18 @@ header {
     padding: 10px;
     background-color: #1A1F2E;
     border-radius: 10px;
-    border: 1px solid #9945FF; /* Solana moru */
+    border: 1px solid #9945FF;
 }
 
 .comment {
     margin-bottom: 10px;
     padding: 5px;
-    border-bottom: 1px solid #9945FF; /* Solana moru */
+    border-bottom: 1px solid #9945FF;
 }
 
 .comment .username {
     font-weight: 600;
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
 }
 
 .comment .timestamp {
@@ -511,7 +524,7 @@ header {
     height: 60px;
     padding: 10px;
     font-size: 14px;
-    border: 2px solid #9945FF; /* Solana moru */
+    border: 2px solid #9945FF;
     border-radius: 10px;
     outline: none;
     background-color: #1A1F2E;
@@ -523,7 +536,7 @@ header {
 footer {
     text-align: center;
     padding: 20px;
-    background: linear-gradient(90deg, #9945FF, #14F195); /* Solana gradyan */
+    background: linear-gradient(90deg, #9945FF, #14F195);
     color: #FFFFFF;
     font-size: 1em;
     margin-top: 40px;
@@ -537,5 +550,17 @@ footer {
 }
 
 .footer-links a:hover {
-    color: #14F195; /* Solana mavisi */
+    color: #14F195;
+}
+
+/* Modal açıkken arka plan için ayrı bir stil */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999; /* Modalın altında kalsın */
+    backdrop-filter: blur(2px); /* Daha hafif bulanıklık */
 }
