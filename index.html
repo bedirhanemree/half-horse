@@ -43,7 +43,7 @@
                     <button id="clearBtn" class="action-btn">Clear</button>
                     <button id="undoBtn" class="action-btn">Undo (Ctrl+Z)</button>
                     <button id="eraserBtn" class="action-btn">Eraser</button>
-                    <button id="publishBtn" class="action-btn publish">Publish!</button>
+                    <button id="publishBtn" class="publish-btn">Publish Now!</button>
                 </div>
                 <div class="tool-section">
                     <h4>Colors</h4>
@@ -57,11 +57,11 @@
                         <button class="color-btn" data-color="#ffa500" style="background-color: #ffa500;"></button>
                         <button class="color-btn" data-color="#800080" style="background-color: #800080;"></button>
                     </div>
-                    <input type="color" id="colorPicker" value="#000000">
+                    <input type="color" id="colorPicker" value="#000000" class="custom-color-picker">
                 </div>
                 <div class="tool-section">
                     <h4>Brush Size</h4>
-                    <input type="range" id="brushSize" min="1" max="50" value="5">
+                    <input type="range" id="brushSize" min="1" max="50" value="5" class="brush-size-slider">
                     <div id="brushPreview" class="brush-preview"></div>
                 </div>
             </div>
