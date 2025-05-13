@@ -67,9 +67,9 @@
             </div>
         </div>
 
-        <!-- Published Drawings -->
+        <!-- Published Drawings (Yeni Paylaşılanlar) -->
         <div class="published-drawings">
-            <h2>Published Creations</h2>
+            <h2>Latest Creations</h2>
             <div id="gallery"></div>
         </div>
     </div>
@@ -92,6 +92,7 @@
     <div class="modal" id="publishModal">
         <div class="modal-content">
             <h3>Publish Your Drawing</h3>
+            <p class="publish-warning">Each user has only one publish right!</p>
             <input type="text" id="drawingTitle" placeholder="Enter Title" class="title-input">
             <img id="drawingPreview" alt="Drawing Preview">
             <button id="confirmPublishBtn" class="action-btn publish">Publish!</button>
@@ -101,16 +102,20 @@
     <!-- Modal for Viewing Drawing -->
     <div class="modal" id="viewDrawingModal">
         <div class="modal-content view-drawing-modal">
-            <h3 id="viewDrawingTitle">Drawing Title</h3>
-            <p id="viewDrawingCreator">Creator: Unknown</p>
-            <img id="viewDrawingImage" alt="Full Drawing">
-            <div class="interaction-section">
-                <button id="likeDrawingBtn" class="action-btn">Like (<span id="likeCount">0</span>)</button>
-                <div class="comments-section">
-                    <h4>Comments</h4>
-                    <div id="commentsList"></div>
-                    <textarea id="commentInput" placeholder="Write a comment..." class="comment-input"></textarea>
-                    <button id="submitCommentBtn" class="action-btn">Submit Comment</button>
+            <div class="view-drawing-content">
+                <div class="drawing-image">
+                    <img id="viewDrawingImage" alt="Full Drawing">
+                </div>
+                <div class="drawing-details">
+                    <h3 id="viewDrawingTitle">Drawing Title</h3>
+                    <p id="viewDrawingCreator">Creator: Unknown</p>
+                    <button id="likeDrawingBtn" class="action-btn">Like (<span id="likeCount">0</span>)</button>
+                    <div class="comments-section">
+                        <h4>Comments</h4>
+                        <div id="commentsList"></div>
+                        <textarea id="commentInput" placeholder="Write a comment..." class="comment-input"></textarea>
+                        <button id="submitCommentBtn" class="action-btn">Submit Comment</button>
+                    </div>
                 </div>
             </div>
         </div>
