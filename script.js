@@ -30,6 +30,10 @@ const submitCommentBtn = document.getElementById('submitCommentBtn');
 const tutorialModal = document.getElementById('tutorialModal');
 const closeTutorialBtn = document.getElementById('closeTutorialBtn');
 
+// Öneri: Hamburger Menü için
+const hamburger = document.querySelector('.hamburger');
+const navigation = document.querySelector('.navigation');
+
 let drawing = false;
 let currentColor = colorPicker ? colorPicker.value : '#000000';
 let undoHistory = [];
@@ -71,7 +75,7 @@ const wordPool = [
     'Fren', 'Ser', 'Wen', 'Lambo', 'Stonk', 'Bitch', 'Dick', 'Ass', 'Booty', 'Thot'
 ];
 
-// SHA-256 hash fonksiyonu (basit bir implementasyon)
+// SHA-256 hash fonksiyonu
 async function sha256(str) {
     const encoder = new TextEncoder();
     const data = encoder.encode(str);
@@ -198,7 +202,7 @@ function updateBrushPreview() {
     }
 }
 
-// Tutorial Modal kontrolü
+// Tutorial Modal kontrolü (Bulanık arka plan ile)
 function showTutorialModal() {
     const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
     if (hasSeenTutorial === 'true') {
@@ -208,11 +212,11 @@ function showTutorialModal() {
 
     if (tutorialModal) {
         const backdrop = document.createElement('div');
-        backdrop.className = 'modal-backdrop';
+        backdrop.className = 'modal-backdrop tutorial-backdrop'; // Öneri: Tutorial için özel sınıf
         document.body.appendChild(backdrop);
 
         tutorialModal.style.display = 'flex';
-        console.log('Showing tutorial modal');
+        console.log('Showing tutorial modal with blurred backdrop');
     }
 }
 
@@ -221,7 +225,7 @@ if (closeTutorialBtn) {
     closeTutorialBtn.addEventListener('click', () => {
         if (tutorialModal) {
             tutorialModal.style.display = 'none';
-            const backdrop = document.querySelector('.modal-backdrop');
+            const backdrop = document.querySelector('.modal-backdrop.tutorial-backdrop');
             if (backdrop) backdrop.remove();
             localStorage.setItem('hasSeenTutorial', 'true');
             console.log('Tutorial modal closed, saved to localStorage');
@@ -234,11 +238,19 @@ if (tutorialModal) {
     window.addEventListener('click', (e) => {
         if (e.target === tutorialModal) {
             tutorialModal.style.display = 'none';
-            const backdrop = document.querySelector('.modal-backdrop');
+            const backdrop = document.querySelector('.modal-backdrop.tutorial-backdrop');
             if (backdrop) backdrop.remove();
             localStorage.setItem('hasSeenTutorial', 'true');
             console.log('Tutorial modal closed by clicking outside, saved to localStorage');
         }
+    });
+}
+
+// Öneri: Hamburger Menü Kontrolü
+if (hamburger && navigation) {
+    hamburger.addEventListener('click', () => {
+        navigation.classList.toggle('active');
+        console.log('Hamburger menu toggled');
     });
 }
 
@@ -293,7 +305,7 @@ if (eraserBtn) {
     });
 }
 
-// Çizim başlama
+// Çizim başlama (Fare)
 if (canvas && ctx) {
     canvas.addEventListener('mousedown', (e) => {
         const rect = canvas.getBoundingClientRect();
@@ -338,6 +350,47 @@ if (canvas && ctx) {
             ctx.closePath();
             saveCanvasState();
         }
+    });
+
+    // Öneri: Mobil Dokunmatik Çizim
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        console.log('Touch start:', x, y);
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (drawing) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            console.log('Touch move:', x, y);
+            if (isErasing) {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.strokeStyle = 'rgba(0,0,0,1)';
+            } else {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = currentColor;
+            }
+            ctx.lineWidth = brushSize.value;
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+    });
+
+    canvas.addEventListener('touchend', () => {
+        console.log('Touch end');
+        drawing = false;
+        ctx.closePath();
+        saveCanvasState();
     });
 }
 
@@ -413,9 +466,25 @@ function combineCanvasWithHorse() {
     }
 }
 
-// Çizimleri localStorage’dan yükleme
-function loadDrawings() {
-    console.log('Loading drawings...');
+// Öneri: Yükleme Animasyonu Fonksiyonları
+function showLoading() {
+    let loading = document.querySelector('.loading');
+    if (!loading) {
+        loading = document.createElement('div');
+        loading.className = 'loading';
+        document.body.appendChild(loading);
+    }
+    loading.style.display = 'block';
+}
+
+function hideLoading() {
+    const loading = document.querySelector('.loading');
+    if (loading) loading.style.display = 'none';
+}
+
+// Çizimleri localStorage’dan yükleme (Filtreleme ile)
+function loadDrawings(filter = 'latest') {
+    console.log(`Loading drawings with filter: ${filter}`);
     if (!gallery) {
         console.error('Gallery element not found.');
         return;
@@ -434,12 +503,17 @@ function loadDrawings() {
         return;
     }
 
-    // Çizimleri tarihe göre sırala (en yeni en üstte)
-    drawings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    // Çizimleri sırala
+    let sortedDrawings = [...drawings];
+    if (filter === 'popular') {
+        sortedDrawings.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
+    } else {
+        sortedDrawings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    }
 
     // Anasayfadaysak sadece son 5 çizimi göster, galerideysem hepsini göster
     const isHomePage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
-    const drawingsToShow = isHomePage ? drawings.slice(0, 5) : drawings;
+    const drawingsToShow = isHomePage ? sortedDrawings.slice(0, 5) : sortedDrawings;
 
     drawingsToShow.forEach((drawing, index) => {
         console.log('Rendering drawing:', drawing);
@@ -474,7 +548,6 @@ function loadDrawings() {
         galleryItem.addEventListener('click', () => {
             console.log('Gallery item clicked:', drawing.title);
             if (viewDrawingModal && viewDrawingImage && viewDrawingTitle && viewDrawingCreator) {
-                // Orijinal indeksi bul (sıralama sonrası indeks değişebilir)
                 const originalIndex = drawings.findIndex(d => d.timestamp === drawing.timestamp);
                 currentDrawing = { ...drawing, index: originalIndex };
                 viewDrawingImage.src = drawing.image;
@@ -488,6 +561,32 @@ function loadDrawings() {
         });
 
         gallery.appendChild(galleryItem);
+    });
+}
+
+// Öneri: Filtre Butonlarını Ayarlama
+function setupFilterButtons() {
+    const filterBar = document.querySelector('.filter-bar');
+    if (!filterBar) return;
+
+    const filters = [
+        { id: 'latest', label: 'En Yeniler' },
+        { id: 'popular', label: 'En Beğenilenler' }
+    ];
+
+    filters.forEach(filter => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.textContent = filter.label;
+        btn.dataset.filter = filter.id;
+        if (filter.id === 'latest') btn.classList.add('active');
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            loadDrawings(filter.id);
+            console.log(`Filter changed to: ${filter.id}`);
+        });
+        filterBar.appendChild(btn);
     });
 }
 
@@ -613,6 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Page loaded, initializing user and loading drawings...');
     initializeUser();
     loadDrawings();
+    setupFilterButtons(); // Öneri: Filtre butonlarını başlat
     updateBrushPreview();
     showTutorialModal();
 });
@@ -650,47 +750,53 @@ if (publishBtn) {
     });
 }
 
-// Modal'daki Publish butonu
+// Modal'daki Publish butonu (Yükleme animasyonu ile)
 if (confirmPublishBtn) {
     confirmPublishBtn.addEventListener('click', () => {
         console.log('Confirm Publish button clicked.');
-        if (!drawingPreview) {
-            console.error('Drawing preview not found.');
-            return;
-        }
-        if (!drawingTitle) {
-            console.error('Drawing title input not found.');
-            return;
-        }
+        showLoading(); // Öneri: Yükleme animasyonu göster
+        setTimeout(() => {
+            if (!drawingPreview) {
+                console.error('Drawing preview not found.');
+                hideLoading();
+                return;
+            }
+            if (!drawingTitle) {
+                console.error('Drawing title input not found.');
+                hideLoading();
+                return;
+            }
 
-        const dataURL = drawingPreview.src;
-        const title = drawingTitle.value.trim() || 'Untitled';
+            const dataURL = drawingPreview.src;
+            const title = drawingTitle.value.trim() || 'Untitled';
 
-        const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-        drawings.push({
-            image: dataURL,
-            title: title,
-            creator: currentUser ? currentUser.username : 'Unknown',
-            likes: [],
-            comments: [],
-            timestamp: new Date().toISOString() // Zaman damgası ekle
-        });
-        try {
-            localStorage.setItem('drawings', JSON.stringify(drawings));
-            console.log('Saved drawing to localStorage:', { image: dataURL, title: title, creator: currentUser ? currentUser.username : 'Unknown' });
-        } catch (err) {
-            console.error('Failed to save drawings to localStorage:', err);
-            alert('Error saving drawing. LocalStorage might be full. Try clearing some drawings.');
-        }
+            const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
+            drawings.push({
+                image: dataURL,
+                title: title,
+                creator: currentUser ? currentUser.username : 'Unknown',
+                likes: [],
+                comments: [],
+                timestamp: new Date().toISOString()
+            });
+            try {
+                localStorage.setItem('drawings', JSON.stringify(drawings));
+                console.log('Saved drawing to localStorage:', { image: dataURL, title: title, creator: currentUser ? currentUser.username : 'Unknown' });
+            } catch (err) {
+                console.error('Failed to save drawings to localStorage:', err);
+                alert('Error saving drawing. LocalStorage might be full.');
+            }
 
-        currentUser.hasPublished = true;
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        console.log('User has published, updated hasPublished status:', currentUser);
+            currentUser.hasPublished = true;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            console.log('User has published, updated hasPublished status:', currentUser);
 
-        checkPublishStatus();
+            checkPublishStatus();
 
-        loadDrawings();
-        publishModal.style.display = 'none';
+            loadDrawings();
+            publishModal.style.display = 'none';
+            hideLoading(); // Öneri: Yükleme animasyonunu kapat
+        }, 1000); // Öneri: 1 saniye gecikme
     });
 }
 
