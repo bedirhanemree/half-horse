@@ -15,7 +15,6 @@
                 <div class="user-info">
                     <span>Welcome, <span id="usernameDisplay">Guest</span>!</span>
                 </div>
-                <!-- Öneri: Hamburger Menü Simgesi -->
                 <span class="hamburger">☰</span>
                 <nav class="navigation">
                     <a href="index.html" class="nav-link">Draw</a>
@@ -32,13 +31,10 @@
     <div class="container">
         <div class="published-drawings">
             <h2>Gallery</h2>
-            <!-- Öneri: Filtreleme Çubuğu -->
             <div class="filter-bar"></div>
             <div id="gallery"></div>
         </div>
     </div>
-
-    <!-- Tutorial Modal -->
     <div class="modal" id="tutorialModal">
         <div class="modal-content tutorial-modal">
             <h3>HALF HORSE CHALLENGE</h3>
@@ -51,8 +47,6 @@
             <button id="closeTutorialBtn" class="action-btn">Let's Get Started!</button>
         </div>
     </div>
-
-    <!-- Modal for Publishing (for script compatibility) -->
     <div class="modal" id="publishModal">
         <div class="modal-content">
             <h3>Publish Your Drawing</h3>
@@ -61,25 +55,26 @@
             <button id="confirmPublishBtn" class="action-btn publish">Publish!</button>
         </div>
     </div>
-
-    <!-- Modal for Viewing Drawing -->
     <div class="modal" id="viewDrawingModal">
         <div class="modal-content view-drawing-modal">
-            <h3 id="viewDrawingTitle">Drawing Title</h3>
-            <p id="viewDrawingCreator">Creator: Unknown</p>
-            <img id="viewDrawingImage" alt="Full Drawing">
-            <div class="interaction-section">
-                <button id="likeDrawingBtn" class="action-btn">Like (<span id="likeCount">0</span>)</button>
-                <div class="comments-section">
-                    <h4>Comments</h4>
-                    <div id="commentsList"></div>
-                    <textarea id="commentInput" placeholder="Write a comment..." class="comment-input"></textarea>
-                    <button id="submitCommentBtn" class="action-btn">Submit Comment</button>
+            <div class="view-drawing-content">
+                <div class="drawing-image">
+                    <img id="viewDrawingImage" alt="Full Drawing">
+                </div>
+                <div class="drawing-details">
+                    <h3 id="viewDrawingTitle">Drawing Title</h3>
+                    <p id="viewDrawingCreator">Creator: Unknown</p>
+                    <button id="likeDrawingBtn" class="action-btn">Like (<span id="likeCount">0</span>)</button>
+                    <div class="comments-section">
+                        <h4>Comments</h4>
+                        <div id="commentsList"></div>
+                        <textarea id="commentInput" placeholder="Write a comment..." class="comment-input"></textarea>
+                        <button id="submitCommentBtn" class="action-btn">Submit Comment</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
     <footer>
         <div class="footer-links">
             <a href="#">About</a> | <a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Contact</a>
