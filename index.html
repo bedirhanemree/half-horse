@@ -15,7 +15,6 @@
                 <div class="user-info">
                     <span>Welcome, <span id="usernameDisplay">Guest</span>!</span>
                 </div>
-                <!-- Öneri: Hamburger Menü Simgesi -->
                 <span class="hamburger">☰</span>
                 <nav class="navigation">
                     <a href="index.html" class="nav-link active">Draw</a>
@@ -31,15 +30,12 @@
     </header>
     <div class="container">
         <div class="main-content">
-            <!-- Drawing Area -->
             <div class="drawing-area">
                 <div class="horse-image">
                     <img src="assets/half-horse.png" alt="Half Horse" id="half-horse" crossorigin="anonymous">
                     <canvas id="drawingCanvas" width="1200" height="800"></canvas>
                 </div>
             </div>
-
-            <!-- Tools (Toolbar) -->
             <div class="toolbar">
                 <div class="tool-section">
                     <button id="clearBtn" class="action-btn"></button>
@@ -68,17 +64,12 @@
                 </div>
             </div>
         </div>
-
-        <!-- Published Drawings (Yeni Paylaşılanlar) -->
         <div class="published-drawings">
             <h2>Latest Creations</h2>
-            <!-- Öneri: Filtreleme Çubuğu -->
             <div class="filter-bar"></div>
             <div id="gallery"></div>
         </div>
     </div>
-
-    <!-- Tutorial Modal -->
     <div class="modal" id="tutorialModal">
         <div class="modal-content tutorial-modal">
             <h3>HALF HORSE CHALLENGE</h3>
@@ -91,8 +82,6 @@
             <button id="closeTutorialBtn" class="action-btn">Let's Get Started!</button>
         </div>
     </div>
-
-    <!-- Modal for Publishing -->
     <div class="modal" id="publishModal">
         <div class="modal-content">
             <h3>Publish Your Drawing</h3>
@@ -102,8 +91,6 @@
             <button id="confirmPublishBtn" class="action-btn publish">Publish!</button>
         </div>
     </div>
-
-    <!-- Modal for Viewing Drawing -->
     <div class="modal" id="viewDrawingModal">
         <div class="modal-content view-drawing-modal">
             <div class="view-drawing-content">
@@ -124,7 +111,6 @@
             </div>
         </div>
     </div>
-
     <footer>
         <div class="footer-links">
             <a href="#">About</a> | <a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Contact</a>
