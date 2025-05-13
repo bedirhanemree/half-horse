@@ -85,14 +85,12 @@ async function sha256(str) {
 function generateRandomUsername() {
     const word1 = wordPool[Math.floor(Math.random() * wordPool.length)];
     const word2 = wordPool[Math.floor(Math.random() * wordPool.length)];
-    // 1 ile 100 arasında rastgele bir sayı
     const number = Math.floor(Math.random() * 100) + 1;
     return `${word1}${word2}${number}`;
 }
 
 // IP adresini alma ve kullanıcı oluşturma
 async function initializeUser() {
-    // localStorage'dan mevcut kullanıcıyı kontrol et
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
         currentUser = JSON.parse(storedUser);
@@ -100,40 +98,50 @@ async function initializeUser() {
         if (usernameDisplay) {
             usernameDisplay.textContent = currentUser.username;
         }
+        checkPublishStatus(); // Kullanıcının publish hakkını kontrol et
         return;
     }
 
     try {
-        // IP adresini al
         const response = await fetch('https://api.ipify.org?format=json');
         const data = await response.json();
         const ip = data.ip;
         console.log('IP address fetched:', ip);
 
-        // IP adresini hash'le
         const userId = await sha256(ip);
         console.log('User ID (hashed IP):', userId);
 
-        // Rastgele kullanıcı adı oluştur
         const username = generateRandomUsername();
         console.log('Generated username:', username);
 
-        // Kullanıcıyı sakla
-        currentUser = { userId, username };
+        currentUser = { userId, username, hasPublished: false };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         console.log('User saved to localStorage:', currentUser);
 
-        // Kullanıcı adını göster
         if (usernameDisplay) {
             usernameDisplay.textContent = currentUser.username;
         }
+        checkPublishStatus();
     } catch (err) {
         console.error('Failed to fetch IP or generate user:', err);
-        // Hata durumunda varsayılan bir isim
-        currentUser = { userId: 'guest', username: 'GuestUser' + (Math.floor(Math.random() * 100) + 1) };
+        currentUser = { userId: 'guest', username: 'GuestUser' + (Math.floor(Math.random() * 100) + 1), hasPublished: false };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         if (usernameDisplay) {
             usernameDisplay.textContent = currentUser.username;
+        }
+        checkPublishStatus();
+    }
+}
+
+// Kullanıcının publish hakkını kontrol et ve butonu güncelle
+function checkPublishStatus() {
+    if (currentUser && currentUser.hasPublished) {
+        if (publishBtn) {
+            publishBtn.disabled = true;
+            publishBtn.style.opacity = '0.5';
+            publishBtn.style.cursor = 'not-allowed';
+            publishBtn.title = 'You have already used your one publish right!';
+            console.log('User has already published, disabling publish button.');
         }
     }
 }
@@ -145,7 +153,7 @@ if (!canvas || !ctx) {
     console.log('Canvas and context initialized successfully.');
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    saveCanvasState(); // İlk durumu kaydet
+    saveCanvasState();
 }
 
 // Canvas durumunu kaydetme fonksiyonu (Undo için)
@@ -153,7 +161,7 @@ function saveCanvasState() {
     undoHistory.push(canvas.toDataURL());
     console.log('Canvas state saved. History length:', undoHistory.length);
     if (undoHistory.length > 50) {
-        undoHistory.shift(); // Bellek kullanımı için sınırı 50 adımda tut
+        undoHistory.shift();
     }
 }
 
@@ -164,7 +172,7 @@ function undoLastAction() {
         return;
     }
 
-    undoHistory.pop(); // Son durumu çıkar
+    undoHistory.pop();
     const lastState = undoHistory[undoHistory.length - 1];
     console.log('Undoing last action. History length:', undoHistory.length);
 
@@ -192,16 +200,13 @@ function updateBrushPreview() {
 
 // Tutorial Modal kontrolü
 function showTutorialModal() {
-    // localStorage'dan kontrol et, kullanıcı daha önce modalı gördü mü?
     const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
     if (hasSeenTutorial === 'true') {
         console.log('User has already seen the tutorial.');
         return;
     }
 
-    // Modal'ı göster
     if (tutorialModal) {
-        // Arka plan katmanı oluştur
         const backdrop = document.createElement('div');
         backdrop.className = 'modal-backdrop';
         document.body.appendChild(backdrop);
@@ -216,10 +221,8 @@ if (closeTutorialBtn) {
     closeTutorialBtn.addEventListener('click', () => {
         if (tutorialModal) {
             tutorialModal.style.display = 'none';
-            // Arka plan katmanını kaldır
             const backdrop = document.querySelector('.modal-backdrop');
             if (backdrop) backdrop.remove();
-            // Kullanıcının modalı gördüğünü localStorage'a kaydet
             localStorage.setItem('hasSeenTutorial', 'true');
             console.log('Tutorial modal closed, saved to localStorage');
         }
@@ -231,10 +234,8 @@ if (tutorialModal) {
     window.addEventListener('click', (e) => {
         if (e.target === tutorialModal) {
             tutorialModal.style.display = 'none';
-            // Arka plan katmanını kaldır
             const backdrop = document.querySelector('.modal-backdrop');
             if (backdrop) backdrop.remove();
-            // Kullanıcının modalı gördüğünü localStorage'a kaydet
             localStorage.setItem('hasSeenTutorial', 'true');
             console.log('Tutorial modal closed by clicking outside, saved to localStorage');
         }
@@ -304,7 +305,6 @@ if (canvas && ctx) {
         ctx.moveTo(x, y);
     });
 
-    // Çizim devam etme
     canvas.addEventListener('mousemove', (e) => {
         if (drawing) {
             const rect = canvas.getBoundingClientRect();
@@ -324,7 +324,6 @@ if (canvas && ctx) {
         }
     });
 
-    // Çizimi durdurma
     canvas.addEventListener('mouseup', () => {
         console.log('Mouse up');
         drawing = false;
@@ -332,7 +331,6 @@ if (canvas && ctx) {
         saveCanvasState();
     });
 
-    // Çizimi canvas dışına çıkıldığında durdur
     canvas.addEventListener('mouseleave', () => {
         if (drawing) {
             console.log('Mouse leave');
@@ -368,7 +366,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// At görseli ve çizimi birleştirme fonksiyonu (Görseli küçültülmüş haliyle)
+// At görseli ve çizimi birleştirme fonksiyonu
 function combineCanvasWithHorse() {
     console.log('Combining canvas with horse image...');
     if (!canvas || !horseImage) {
@@ -451,10 +449,21 @@ function loadDrawings() {
         creator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
         galleryItem.appendChild(creator);
 
-        const title = document.createElement('p');
-        title.className = 'title';
-        title.textContent = drawing.title || 'Untitled';
-        galleryItem.appendChild(title);
+        // Like ve yorum sayılarını göster
+        const stats = document.createElement('div');
+        stats.className = 'stats';
+
+        const likeCount = document.createElement('span');
+        likeCount.className = 'like-count';
+        likeCount.textContent = (drawing.likes || []).length;
+        stats.appendChild(likeCount);
+
+        const commentCount = document.createElement('span');
+        commentCount.className = 'comment-count';
+        commentCount.textContent = (drawing.comments || []).length;
+        stats.appendChild(commentCount);
+
+        galleryItem.appendChild(stats);
 
         galleryItem.addEventListener('click', () => {
             console.log('Gallery item clicked:', drawing.title);
@@ -516,6 +525,9 @@ function updateLikesAndComments() {
             commentsList.appendChild(commentDiv);
         });
     }
+
+    // Galeriyi güncelle
+    loadDrawings();
 }
 
 // Beğenme işlemi
@@ -598,10 +610,22 @@ document.addEventListener('DOMContentLoaded', () => {
     showTutorialModal();
 });
 
-// Modal'ı açma
+// Modal'ı açma (Publish Butonu)
 if (publishBtn) {
     publishBtn.addEventListener('click', () => {
         console.log('Publish button clicked.');
+        if (currentUser.hasPublished) {
+            alert('You have already used your one publish right!');
+            return;
+        }
+
+        // Uyarı mesajı göster
+        const confirmPublish = confirm('Each user has only one publish right! Are you sure?');
+        if (!confirmPublish) {
+            console.log('User cancelled publish action.');
+            return;
+        }
+
         if (!publishModal) {
             console.error('Publish modal not found.');
             return;
@@ -657,6 +681,15 @@ if (confirmPublishBtn) {
             console.error('Failed to save drawings to localStorage:', err);
             alert('Error saving drawing. LocalStorage might be full. Try clearing some drawings.');
         }
+
+        // Kullanıcının publish hakkını kullanmış olarak işaretle
+        currentUser.hasPublished = true;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        console.log('User has published, updated hasPublished status:', currentUser);
+
+        // Publish butonunu devre dışı bırak
+        checkPublishStatus();
+
         loadDrawings();
         publishModal.style.display = 'none';
     });
