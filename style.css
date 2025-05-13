@@ -170,27 +170,30 @@ header {
     height: 100%;
 }
 
-/* Toolbar */
+/* Toolbar (Daha Profesyonel Tasarım) */
 .toolbar {
-    width: 220px;
-    background-color: #2A2F4A;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    width: 250px;
+    background: linear-gradient(135deg, #2A2F4A, #1A1F2E);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+    border: 1px solid #9945FF;
 }
 
 .tool-section {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .tool-section h4 {
-    margin: 0 0 10px;
+    margin: 0 0 15px;
     color: #14F195;
-    font-size: 1.2em;
+    font-size: 1.3em;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .action-btn {
@@ -201,11 +204,13 @@ header {
     border: none;
     border-radius: 25px;
     cursor: pointer;
-    transition: transform 0.1s, background-color 0.3s;
+    transition: transform 0.1s, background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .action-btn:hover {
     transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .action-btn:active {
@@ -227,26 +232,47 @@ header {
     color: #1A1F2E;
 }
 
-.action-btn.publish {
-    background-color: #9945FF;
+/* Publish Butonu (Farklı Stil) */
+.publish-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(90deg, #9945FF, #14F195);
     color: #FFFFFF;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.3s;
+    box-shadow: 0 4px 15px rgba(153, 69, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.publish-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(153, 69, 255, 0.7);
+}
+
+.publish-btn:active {
+    transform: scale(0.95);
 }
 
 .color-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
 .color-btn {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border: none;
-    border-radius: 50%;
+    border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, border 0.2s;
 }
 
 .color-btn:hover {
@@ -257,17 +283,31 @@ header {
     border: 3px solid #14F195;
 }
 
-.toolbar input[type="color"] {
-    width: 40px;
-    height: 40px;
+.custom-color-picker {
+    width: 100%;
+    height: 45px;
     border: none;
+    border-radius: 10px;
     cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    background-color: #1A1F2E;
+    padding: 5px;
 }
 
-.toolbar input[type="range"] {
+.brush-size-slider {
     width: 100%;
     accent-color: #9945FF;
     margin: 10px 0;
+    height: 8px;
+    border-radius: 5px;
+    background: #1A1F2E;
+    outline: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.brush-size-slider:hover {
+    opacity: 1;
 }
 
 .brush-preview {
@@ -280,6 +320,7 @@ header {
     align-items: center;
     justify-content: center;
     transition: width 0.3s, height 0.3s;
+    border: 2px solid #9945FF;
 }
 
 /* Galeri Bölümü */
@@ -340,17 +381,30 @@ header {
     white-space: nowrap;
 }
 
-.gallery-item .title {
-    margin: 2px 0 0;
+.gallery-item .stats {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 5px;
     font-size: 14px;
     color: #FFFFFF;
-    font-weight: 600;
-    word-wrap: break-word;
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+}
+
+.gallery-item .stats .like-count,
+.gallery-item .stats .comment-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.gallery-item .stats .like-count::before {
+    content: '❤️';
+    font-size: 16px;
+}
+
+.gallery-item .stats .comment-count::before {
+    content: '💬';
+    font-size: 16px;
 }
 
 /* Modal Stilleri */
