@@ -33,9 +33,9 @@ const closeTutorialBtn = document.getElementById('closeTutorialBtn');
 let drawing = false;
 let currentColor = colorPicker ? colorPicker.value : '#000000';
 let undoHistory = [];
-let currentUser = null; // Şu anki kullanıcıyı saklamak için
-let currentDrawing = null; // Şu an görüntülenen çizimi saklamak için
-let isErasing = false; // Silgi modunu takip etmek için
+let currentUser = null;
+let currentDrawing = null;
+let isErasing = false;
 
 // Elementlerin varlığını kontrol et
 console.log('Canvas:', canvas);
@@ -98,7 +98,7 @@ async function initializeUser() {
         if (usernameDisplay) {
             usernameDisplay.textContent = currentUser.username;
         }
-        checkPublishStatus(); // Kullanıcının publish hakkını kontrol et
+        checkPublishStatus();
         return;
     }
 
@@ -434,7 +434,14 @@ function loadDrawings() {
         return;
     }
 
-    drawings.forEach((drawing, index) => {
+    // Çizimleri tarihe göre sırala (en yeni en üstte)
+    drawings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    // Anasayfadaysak sadece son 5 çizimi göster, galerideysem hepsini göster
+    const isHomePage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
+    const drawingsToShow = isHomePage ? drawings.slice(0, 5) : drawings;
+
+    drawingsToShow.forEach((drawing, index) => {
         console.log('Rendering drawing:', drawing);
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
@@ -449,7 +456,6 @@ function loadDrawings() {
         creator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
         galleryItem.appendChild(creator);
 
-        // Like ve yorum sayılarını göster
         const stats = document.createElement('div');
         stats.className = 'stats';
 
@@ -468,7 +474,9 @@ function loadDrawings() {
         galleryItem.addEventListener('click', () => {
             console.log('Gallery item clicked:', drawing.title);
             if (viewDrawingModal && viewDrawingImage && viewDrawingTitle && viewDrawingCreator) {
-                currentDrawing = { ...drawing, index };
+                // Orijinal indeksi bul (sıralama sonrası indeks değişebilir)
+                const originalIndex = drawings.findIndex(d => d.timestamp === drawing.timestamp);
+                currentDrawing = { ...drawing, index: originalIndex };
                 viewDrawingImage.src = drawing.image;
                 viewDrawingTitle.textContent = drawing.title || 'Untitled';
                 viewDrawingCreator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
@@ -526,7 +534,6 @@ function updateLikesAndComments() {
         });
     }
 
-    // Galeriyi güncelle
     loadDrawings();
 }
 
@@ -619,13 +626,6 @@ if (publishBtn) {
             return;
         }
 
-        // Uyarı mesajı göster
-        const confirmPublish = confirm('Each user has only one publish right! Are you sure?');
-        if (!confirmPublish) {
-            console.log('User cancelled publish action.');
-            return;
-        }
-
         if (!publishModal) {
             console.error('Publish modal not found.');
             return;
@@ -672,7 +672,8 @@ if (confirmPublishBtn) {
             title: title,
             creator: currentUser ? currentUser.username : 'Unknown',
             likes: [],
-            comments: []
+            comments: [],
+            timestamp: new Date().toISOString() // Zaman damgası ekle
         });
         try {
             localStorage.setItem('drawings', JSON.stringify(drawings));
@@ -682,12 +683,10 @@ if (confirmPublishBtn) {
             alert('Error saving drawing. LocalStorage might be full. Try clearing some drawings.');
         }
 
-        // Kullanıcının publish hakkını kullanmış olarak işaretle
         currentUser.hasPublished = true;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         console.log('User has published, updated hasPublished status:', currentUser);
 
-        // Publish butonunu devre dışı bırak
         checkPublishStatus();
 
         loadDrawings();
