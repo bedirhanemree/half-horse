@@ -7,14 +7,12 @@
 body {
     font-family: 'Comic Neue', Arial, sans-serif;
     background: #1A1F2E;
-    color: #E6E6E6; /* Öneri: Daha yumuşak beyaz için güncellendi */
+    color: #E6E6E6;
     line-height: 1.6;
 }
 
-/* Yeni Font için Poppins Ekleniyor - Öneri */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
 
-/* Genel Animasyonlar için Keyframes - Öneri */
 @keyframes pulse {
     0% { box-shadow: 0 0 10px rgba(153, 69, 255, 0.5); }
     50% { box-shadow: 0 0 20px rgba(153, 69, 255, 0.8), 0 0 30px rgba(20, 241, 149, 0.4); }
@@ -37,7 +35,6 @@ body {
     75% { transform: rotate(-5deg); }
 }
 
-/* Header Stilleri */
 header {
     display: flex;
     justify-content: center;
@@ -46,7 +43,7 @@ header {
     background: #1A1F2E;
     border-bottom: 2px solid #9945FF;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    position: sticky; /* Öneri: Sticky header */
+    position: sticky;
     top: 0;
     z-index: 1000;
 }
@@ -65,13 +62,13 @@ header {
     color: #14F195;
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: color 0.3s, transform 0.3s; /* Öneri: Animasyon için transform */
-    font-family: 'Poppins', sans-serif; /* Öneri: Poppins fontu */
+    transition: color 0.3s, transform 0.3s;
+    font-family: 'Poppins', sans-serif;
 }
 
 .logo:hover {
     color: #FFFFFF;
-    animation: logoWobble 0.5s; /* Öneri: Wobble animasyonu */
+    animation: logoWobble 0.5s;
 }
 
 .header-right {
@@ -105,11 +102,11 @@ header {
     text-decoration: none;
     border-radius: 15px;
     font-weight: 600;
-    transition: background-color 0.3s, color 0.3s, background-image 0.3s; /* Öneri: Gradient geçişi */
+    transition: background-color 0.3s, color 0.3s, background-image 0.3s;
 }
 
 .nav-link:hover {
-    background-image: linear-gradient(90deg, #9945FF, #14F195); /* Öneri: Neon gradient */
+    background-image: linear-gradient(90deg, #9945FF, #14F195);
     color: #FFFFFF;
 }
 
@@ -150,7 +147,6 @@ header {
     color: #FFFFFF;
 }
 
-/* Öneri: Hamburger Menü Stilleri */
 .hamburger {
     display: none;
     cursor: pointer;
@@ -181,7 +177,6 @@ header {
     }
 }
 
-/* Container ve Main Content */
 .container {
     max-width: 1600px;
     margin: 20px auto;
@@ -195,7 +190,6 @@ header {
     justify-content: center;
 }
 
-/* Çizim Alanı */
 .drawing-area {
     flex: 1;
     max-width: 1200px;
@@ -207,9 +201,9 @@ header {
     height: 800px;
     background-color: #FFFFFF;
     border-radius: 20px;
-    box-shadow: 0 0 15px rgba(153, 69, 255, 0.5), 0 0 30px rgba(20, 241, 149, 0.3); /* Öneri: Neon çerçeve */
+    box-shadow: 0 0 15px rgba(153, 69, 255, 0.5), 0 0 30px rgba(20, 241, 149, 0.3);
     overflow: hidden;
-    animation: pulse 2s infinite; /* Öneri: Nabız atışı efekti */
+    animation: pulse 2s infinite;
 }
 
 #half-horse {
@@ -233,7 +227,6 @@ header {
     height: 100%;
 }
 
-/* Toolbar */
 .toolbar {
     width: 250px;
     background: linear-gradient(135deg, #2A2F4A, #1A1F2E);
@@ -257,43 +250,44 @@ header {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-family: 'Poppins', sans-serif; /* Öneri: Poppins fontu */
+    font-family: 'Poppins', sans-serif;
 }
 
 .action-btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: 700;
-    border: none;
-    border-radius: 50%; /* Öneri: Dairesel butonlar */
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.3s;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    display: flex; /* Öneri: İkon ve metin hizalaması */
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: linear-gradient(90deg, #9945FF, #14F195); /* Öneri: Gradient arka plan */
+    border-radius: 10px;
+    width: 100%;
+    height: 45px;
+    font-size: 16px;
+    background: linear-gradient(90deg, #9945FF, #14F195);
     color: #FFFFFF;
+    transition: transform 0.2s, box-shadow 0.3s;
+    font-family: 'Poppins', sans-serif;
 }
 
+#clearBtn::before, #undoBtn::before, #eraserBtn::before {
+    content: none;
+}
+
+#clearBtn, #undoBtn, #eraserBtn {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#clearBtn::after { content: 'Clear'; }
+#undoBtn::after { content: 'Undo'; }
+#eraserBtn::after { content: 'Eraser'; }
+
 .action-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.02);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .action-btn:active {
-    animation: bounce 0.3s; /* Öneri: Bouncy efekt */
-}
-
-#clearBtn::before { content: '🧹'; } /* Öneri: İkon */
-#undoBtn::before { content: '⬅️'; }
-#eraserBtn::before { content: '✂️'; }
-
-.action-btn:nth-child(1), .action-btn:nth-child(2), .action-btn:nth-child(3) {
-    width: 60px;
-    height: 60px;
+    animation: bounce 0.3s;
 }
 
 .publish-btn {
@@ -382,15 +376,14 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: width 0.3s, height 0.3s, transform 0.3s; /* Öneri: Animasyon */
+    transition: width 0.3s, height 0.3s, transform 0.3s;
     border: 2px solid #9945FF;
 }
 
 .brush-preview:hover {
-    transform: scale(1.2); /* Öneri: Hover animasyonu */
+    transform: scale(1.2);
 }
 
-/* Galeri Bölümü */
 .published-drawings {
     background-color: #2A2F4A;
     padding: 20px;
@@ -405,10 +398,9 @@ header {
     font-size: 1.8em;
     font-weight: 700;
     text-align: center;
-    font-family: 'Poppins', sans-serif; /* Öneri: Poppins fontu */
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Öneri: Filtreleme Çubuğu */
 .filter-bar {
     display: flex;
     justify-content: center;
@@ -446,11 +438,11 @@ header {
     text-align: center;
     width: 300px;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s; /* Öneri: Hover efekti */
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .gallery-item:hover {
-    transform: translateY(-5px); /* Öneri: Yukarı kayma */
+    transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
@@ -473,7 +465,7 @@ header {
     margin: 5px 0 0;
     font-size: 12px;
     color: #14F195;
-    font-weight: 700; /* Öneri: Daha belirgin metin */
+    font-weight: 700;
     word-wrap: break-word;
     display: block;
     width: 100%;
@@ -496,12 +488,12 @@ header {
     display: flex;
     align-items: center;
     gap: 5px;
-    transition: transform 0.3s; /* Öneri: Animasyon */
+    transition: transform 0.3s;
 }
 
 .gallery-item .stats .like-count:hover,
 .gallery-item .stats .comment-count:hover {
-    transform: scale(1.2); /* Öneri: Büyüme efekti */
+    transform: scale(1.2);
 }
 
 .gallery-item .stats .like-count::before {
@@ -514,7 +506,6 @@ header {
     font-size: 16px;
 }
 
-/* Modal Stilleri */
 .modal {
     display: none;
     position: fixed;
@@ -542,7 +533,7 @@ header {
     gap: 15px;
     position: relative;
     z-index: 1001;
-    animation: slideIn 0.3s ease; /* Öneri: Açılma animasyonu */
+    animation: slideIn 0.3s ease;
 }
 
 .modal-content h3 {
@@ -550,10 +541,9 @@ header {
     color: #14F195;
     font-size: 1.5em;
     font-weight: 700;
-    font-family: 'Poppins', sans-serif; /* Öneri: Poppins fontu */
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Publish Modal için Uyarı Notu */
 .publish-warning {
     margin: 0;
     color: #ff6f61;
@@ -561,7 +551,6 @@ header {
     font-style: italic;
 }
 
-/* Tutorial Modal Stilleri */
 .tutorial-modal {
     width: 500px;
     max-width: 90%;
@@ -572,9 +561,9 @@ header {
     padding: 0;
     text-align: left;
     color: #FFFFFF;
-    font-size: 1.2em; /* Öneri: Daha büyük font */
+    font-size: 1.2em;
     line-height: 1.8;
-    font-weight: 700; /* Öneri: Daha belirgin */
+    font-weight: 700;
 }
 
 .rules-list li {
@@ -588,17 +577,25 @@ header {
     border: 2px solid #9945FF;
     display: block;
     margin: 0 auto;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Öneri: Gölge efekti */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 #closeTutorialBtn {
-    background-color: #14F195;
-    color: #1A1F2E;
+    background: linear-gradient(90deg, #9945FF, #14F195);
+    color: #FFFFFF;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.2s, box-shadow 0.3s;
 }
 
 #closeTutorialBtn:hover {
-    background-color: #9945FF;
-    color: #FFFFFF;
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(153, 69, 255, 0.5);
 }
 
 .title-input {
@@ -618,14 +615,13 @@ header {
     object-fit: cover;
     border-radius: 15px;
     border: 2px solid #9945FF;
-    transition: transform 0.3s; /* Öneri: Hover efekti */
+    transition: transform 0.3s;
 }
 
 #drawingPreview:hover {
-    transform: scale(1.05); /* Öneri: Büyüme */
+    transform: scale(1.05);
 }
 
-/* View Drawing Modal Stilleri */
 .view-drawing-modal {
     width: 800px;
     max-width: 90%;
@@ -634,10 +630,13 @@ header {
 .view-drawing-content {
     display: flex;
     gap: 20px;
+    align-items: flex-start;
 }
 
 .drawing-image {
     flex: 1;
+    display: flex;
+    justify-content: center;
 }
 
 #viewDrawingImage {
@@ -646,6 +645,7 @@ header {
     object-fit: contain;
     border-radius: 15px;
     border: 2px solid #9945FF;
+    margin: 0 auto;
 }
 
 .drawing-details {
@@ -663,12 +663,22 @@ header {
 }
 
 #likeDrawingBtn {
-    background-color: #14F195;
-    color: #1A1F2E;
+    background: linear-gradient(90deg, #9945FF, #14F195);
+    color: #FFFFFF;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    transition: transform 0.2s, box-shadow 0.3s;
+}
+
+#likeDrawingBtn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(153, 69, 255, 0.5);
 }
 
 #likeDrawingBtn.liked {
-    background-color: #ff6f61;
+    background: linear-gradient(90deg, #ff6f61, #9945FF);
     color: #FFFFFF;
 }
 
@@ -682,7 +692,7 @@ header {
     margin: 0;
     color: #14F195;
     font-size: 1.2em;
-    font-family: 'Poppins', sans-serif; /* Öneri: Poppins fontu */
+    font-family: 'Poppins', sans-serif;
 }
 
 #commentsList {
@@ -729,7 +739,6 @@ header {
     resize: none;
 }
 
-/* Footer Stilleri */
 footer {
     text-align: center;
     padding: 20px;
@@ -750,7 +759,6 @@ footer {
     color: #14F195;
 }
 
-/* Modal açıkken arka plan için ayrı bir stil */
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -759,16 +767,14 @@ footer {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
-    backdrop-filter: blur(5px); /* Bulanık arka plan */
+    backdrop-filter: blur(5px);
 }
 
-/* Öneri: Tutorial modalı için özel bulanıklık */
 #tutorialModal .modal-backdrop {
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
 }
 
-/* Öneri: Yükleme Animasyonu */
 .loading {
     display: none;
     position: fixed;
@@ -781,11 +787,39 @@ footer {
     z-index: 1002;
 }
 
-/* Öneri: Mobil Uyum */
 @media (max-width: 768px) {
     .drawing-area {
         width: 100vw;
     }
     #drawingCanvas {
         width: 100vw;
-        height: calc(100vh - 100px-fortfahren?
+        height: calc(100vh - 100px);
+    }
+    .toolbar {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        border-radius: 15px 15px 0 0;
+        padding: 15px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    .tool-section {
+        margin-bottom: 0;
+    }
+    .tool-section h4 {
+        display: none;
+    }
+    .color-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    #gallery {
+        flex-direction: column;
+        align-items: center;
+    }
+    .gallery-item img {
+        width: 90vw;
+        height: auto;
+    }
+}
