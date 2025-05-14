@@ -3,83 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Half-Horse Drawing Challenge - Gallery</title>
+    <title>Horse Gallery - Gallery</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 </head>
 <body>
     <header>
         <div class="header-content">
-            <div class="logo">Half-Horse Challenge</div>
+            <span class="hamburger">☰</span>
+            <div class="logo">Horse Gallery</div>
             <div class="header-right">
                 <div class="user-info">
-                    <span>Welcome, <span id="usernameDisplay">Guest</span>!</span>
+                    <span id="usernameDisplay">Loading...</span>
                 </div>
-                <span class="hamburger">☰</span>
                 <nav class="navigation">
                     <a href="index.html" class="nav-link">Draw</a>
                     <a href="gallery.html" class="nav-link active">Gallery</a>
                 </nav>
-                <div class="contract-address">
-                    <span>Contract Address: </span>
-                    <span id="ca-text">0x1234...5678</span>
-                    <button id="copyBtn" class="copy-btn">Copy</button>
-                </div>
             </div>
         </div>
     </header>
+
+    <!-- Yeni CA bölümü -->
+    <div class="mobile-ca-section">
+        <div class="contract-address">
+            <span id="ca-text">0x1234...5678</span>
+            <button class="copy-btn">Copy</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="published-drawings">
-            <h2>Gallery</h2>
+            <h2>All Drawings</h2>
             <div class="filter-bar"></div>
             <div id="gallery"></div>
         </div>
     </div>
-    <div class="modal" id="tutorialModal">
-        <div class="modal-content tutorial-modal">
-            <h3>HALF HORSE CHALLENGE</h3>
-            <ul class="rules-list">
-                <li>1. Finish the horse however you want just go wild and crazy bro no limits! 🐴</li>
-                <li>2. Hit that Publish button and show off your dope creation to everyone! 🚀</li>
-                <li>3. Dont be a jerk give some love with comments and likes to other drawings! 🦍</li>
-            </ul>
-            <img src="assets/horse-animation.gif" alt="Horse Animation" class="tutorial-gif">
-            <button id="closeTutorialBtn" class="action-btn">Let's Get Started!</button>
-        </div>
-    </div>
-    <div class="modal" id="publishModal">
-        <div class="modal-content">
-            <h3>Publish Your Drawing</h3>
-            <input type="text" id="drawingTitle" placeholder="Enter Title" class="title-input">
-            <img id="drawingPreview" alt="Drawing Preview">
-            <button id="confirmPublishBtn" class="action-btn publish">Publish!</button>
-        </div>
-    </div>
-    <div class="modal" id="viewDrawingModal">
+
+    <!-- View Drawing Modal -->
+    <div id="viewDrawingModal" class="modal">
         <div class="modal-content view-drawing-modal">
+            <h3 id="viewDrawingTitle"></h3>
+            <p id="viewDrawingCreator"></p>
             <div class="view-drawing-content">
                 <div class="drawing-image">
-                    <img id="viewDrawingImage" alt="Full Drawing">
+                    <img id="viewDrawingImage" src="" alt="Drawing">
                 </div>
                 <div class="drawing-details">
-                    <h3 id="viewDrawingTitle">Drawing Title</h3>
-                    <p id="viewDrawingCreator">Creator: Unknown</p>
-                    <button id="likeDrawingBtn" class="action-btn">Like (<span id="likeCount">0</span>)</button>
+                    <button id="likeDrawingBtn">Like ❤️</button>
+                    <span id="likeCount">0</span>
                     <div class="comments-section">
                         <h4>Comments</h4>
                         <div id="commentsList"></div>
-                        <textarea id="commentInput" placeholder="Write a comment..." class="comment-input"></textarea>
-                        <button id="submitCommentBtn" class="action-btn">Submit Comment</button>
+                        <textarea id="commentInput" class="comment-input" placeholder="Add a comment..."></textarea>
+                        <button id="submitCommentBtn" class="action-btn">Comment</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <footer>
         <div class="footer-links">
-            <a href="#">About</a> | <a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Contact</a>
+            <a href="https://github.com/x/horse-gallery" target="_blank">GitHub</a>
+            <a href="https://x.com/horsegallery" target="_blank">X</a>
         </div>
+        <p>&copy; 2025 Horse Gallery. All rights reserved.</p>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
