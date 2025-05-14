@@ -9,6 +9,7 @@ body {
     background: #1A1F2E;
     color: #E6E6E6;
     line-height: 1.6;
+    overflow-x: hidden; /* Mobil cihazlarda yatay kaydırmayı engelle */
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
@@ -155,8 +156,16 @@ header {
 }
 
 @media (max-width: 768px) {
+    .header-content {
+        flex-wrap: wrap; /* Küçük ekranlarda header içeriği sarılır */
+    }
+    .logo {
+        font-size: 1.5em; /* Mobil cihazlarda logo boyutu küçültülür */
+    }
     .header-right {
         position: relative;
+        width: 100%;
+        justify-content: space-between;
     }
     .navigation {
         display: none;
@@ -168,12 +177,20 @@ header {
         padding: 10px;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        width: 100%;
     }
     .navigation.active {
         display: flex;
     }
+    .nav-link {
+        padding: 12px; /* Mobil cihazlarda daha büyük tıklama alanı */
+        font-size: 1.1em;
+    }
     .hamburger {
         display: block;
+    }
+    .contract-address {
+        margin-top: 10px;
     }
 }
 
@@ -197,8 +214,8 @@ header {
 
 .horse-image {
     position: relative;
-    width: 1200px;
-    height: 800px;
+    width: 100%;
+    height: auto;
     background-color: #FFFFFF;
     border-radius: 20px;
     box-shadow: 0 0 15px rgba(153, 69, 255, 0.5), 0 0 30px rgba(20, 241, 149, 0.3);
@@ -787,39 +804,119 @@ footer {
     z-index: 1002;
 }
 
+/* Mobil cihazlar için güncellenmiş medya sorguları */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 10px; /* Daha küçük padding */
+        margin: 10px auto;
+    }
+    .main-content {
+        flex-direction: column; /* Çizim alanı ve toolbar dikey hizalanır */
+        gap: 10px;
+    }
     .drawing-area {
-        width: 100vw;
+        max-width: 100%; /* Çizim alanı ekran genişliğine sığar */
+        width: 100%;
+    }
+    .horse-image {
+        width: 100%;
+        height: 400px; /* Mobil cihazlarda sabit yükseklik */
     }
     #drawingCanvas {
-        width: 100vw;
-        height: calc(100vh - 100px);
+        width: 100%;
+        height: 400px; /* Kanvas boyutu mobil için ayarlandı */
     }
     .toolbar {
         position: fixed;
         bottom: 0;
+        left: 0;
         width: 100%;
         border-radius: 15px 15px 0 0;
-        padding: 15px;
+        padding: 10px;
         display: flex;
         flex-direction: row;
         justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        background: linear-gradient(135deg, #2A2F4A, #1A1F2E);
+        border: none;
     }
     .tool-section {
         margin-bottom: 0;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
     }
     .tool-section h4 {
-        display: none;
+        display: none; /* Mobil cihazlarda başlık gizlenir */
+    }
+    .action-btn {
+        width: 60px;
+        height: 40px;
+        font-size: 14px;
+        padding: 5px;
+    }
+    .publish-btn {
+        width: 80px;
+        height: 40px;
+        font-size: 14px;
+        padding: 5px;
     }
     .color-buttons {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+    }
+    .color-btn {
+        width: 30px;
+        height: 30px;
+    }
+    .custom-color-picker {
+        height: 40px;
+    }
+    .brush-size-slider {
+        width: 100px;
+    }
+    .brush-preview {
+        width: 40px;
+        height: 40px;
     }
     #gallery {
         flex-direction: column;
         align-items: center;
     }
-    .gallery-item img {
-        width: 90vw;
+    .gallery-item {
+        width: 90%;
+    }
+    #gallery .gallery-item img {
+        width: 100%;
         height: auto;
+        max-height: 200px;
+    }
+    .modal {
+        padding-top: 50px;
+    }
+    .modal-content {
+        width: 90%;
+        padding: 15px;
+    }
+    .tutorial-modal {
+        width: 90%;
+    }
+    .tutorial-gif {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+    }
+    .view-drawing-modal {
+        width: 90%;
+    }
+    .view-drawing-content {
+        flex-direction: column;
+    }
+    #viewDrawingImage {
+        max-height: 300px;
+    }
+    .comment-input {
+        height: 80px;
     }
 }
