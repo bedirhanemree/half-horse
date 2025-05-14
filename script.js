@@ -1,64 +1,37 @@
 // Element selections for the drawing application
 const canvas = document.getElementById('drawingCanvas');
-
-// Canvas context initialization
 const ctx = canvas ? canvas.getContext('2d') : null;
-
-// Toolbar button selections
 const clearBtn = document.getElementById('clearBtn');
 const undoBtn = document.getElementById('undoBtn');
 const eraserBtn = document.getElementById('eraserBtn');
 const publishBtn = document.getElementById('publishBtn');
-
-// Color and brush settings
 const colorPicker = document.getElementById('colorPicker');
 const brushSize = document.getElementById('brushSize');
 const brushPreview = document.getElementById('brushPreview');
-
-// Gallery section
 const gallery = document.getElementById('gallery');
-
-// Color buttons for the toolbar
 const colorButtons = document.querySelectorAll('.color-btn');
-
-// Contract address copy functionality
 const copyBtn = document.getElementById('copyBtn');
 const caText = document.getElementById('ca-text');
-
-// Publish modal elements
 const publishModal = document.getElementById('publishModal');
 const drawingPreview = document.getElementById('drawingPreview');
 const drawingTitle = document.getElementById('drawingTitle');
 const confirmPublishBtn = document.getElementById('confirmPublishBtn');
-
-// Horse image for drawing
 const horseImage = document.getElementById('half-horse');
-
-// View drawing modal elements
 const viewDrawingModal = document.getElementById('viewDrawingModal');
 const viewDrawingTitle = document.getElementById('viewDrawingTitle');
 const viewDrawingCreator = document.getElementById('viewDrawingCreator');
 const viewDrawingImage = document.getElementById('viewDrawingImage');
-
-// User display
 const usernameDisplay = document.getElementById('usernameDisplay');
-
-// Like and comment functionality
 const likeDrawingBtn = document.getElementById('likeDrawingBtn');
 const likeCount = document.getElementById('likeCount');
 const commentsList = document.getElementById('commentsList');
 const commentInput = document.getElementById('commentInput');
 const submitCommentBtn = document.getElementById('submitCommentBtn');
-
-// Tutorial modal elements
 const tutorialModal = document.getElementById('tutorialModal');
 const closeTutorialBtn = document.getElementById('closeTutorialBtn');
-
-// Hamburger menu elements
 const hamburger = document.querySelector('.hamburger');
 const navigation = document.querySelector('.navigation');
 
-// State variables
 let drawing = false;
 let currentColor = colorPicker ? colorPicker.value : '#000000';
 let undoHistory = [];
@@ -175,15 +148,53 @@ function checkPublishStatus() {
     }
 }
 
+// Function to set canvas size dynamically
+function setCanvasSize() {
+    if (!canvas) return;
+    const container = canvas.parentElement;
+    const dpr = window.devicePixelRatio || 1; // Cihaz piksel oranını al
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    // CSS boyutlarını ayarla
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    // Kanvasın gerçek piksel boyutlarını ayarla (retina ekranlar için)
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+
+    // Çizim ölçeğini ayarla
+    ctx.scale(dpr, dpr);
+
+    console.log(`Canvas size set to ${width}x${height} (dpr: ${dpr})`);
+}
+
 // Initialize canvas settings
 if (!canvas || !ctx) {
     console.error('Canvas or context not found.');
 } else {
     console.log('Canvas and context initialized successfully.');
+    setCanvasSize(); // Kanvas boyutunu ayarla
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     saveCanvasState();
 }
+
+// Resize canvas when window size changes
+window.addEventListener('resize', () => {
+    setCanvasSize();
+    // Mevcut çizimi koru
+    const lastState = undoHistory[undoHistory.length - 1];
+    if (lastState) {
+        const img = new Image();
+        img.src = lastState;
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+    }
+});
 
 // Function to save canvas state for undo functionality
 function saveCanvasState() {
@@ -330,12 +341,29 @@ if (eraserBtn) {
     });
 }
 
-// Drawing event listeners for mouse interactions
+// Drawing event listeners for mouse and touch interactions
 if (canvas && ctx) {
-    canvas.addEventListener('mousedown', (e) => {
+    // Function to get touch/mouse coordinates
+    function getCoordinates(event) {
         const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const dpr = window.devicePixelRatio || 1;
+        let x, y;
+
+        if (event.type.includes('touch')) {
+            const touch = event.touches[0];
+            x = (touch.clientX - rect.left) * (canvas.width / dpr) / rect.width;
+            y = (touch.clientY - rect.top) * (canvas.height / dpr) / rect.height;
+        } else {
+            x = (event.clientX - rect.left) * (canvas.width / dpr) / rect.width;
+            y = (event.clientY - rect.top) * (canvas.height / dpr) / rect.height;
+        }
+
+        return { x, y };
+    }
+
+    // Mouse events
+    canvas.addEventListener('mousedown', (e) => {
+        const { x, y } = getCoordinates(e);
         console.log('Mouse down:', x, y);
         drawing = true;
         ctx.beginPath();
@@ -344,9 +372,7 @@ if (canvas && ctx) {
 
     canvas.addEventListener('mousemove', (e) => {
         if (drawing) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const { x, y } = getCoordinates(e);
             console.log('Mouse move:', x, y);
             if (isErasing) {
                 ctx.globalCompositeOperation = 'destination-out';
@@ -377,13 +403,10 @@ if (canvas && ctx) {
         }
     });
 
-    // Drawing event listeners for touch interactions (mobile support)
+    // Touch events
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
+        const { x, y } = getCoordinates(e);
         console.log('Touch start:', x, y);
         drawing = true;
         ctx.beginPath();
@@ -391,12 +414,9 @@ if (canvas && ctx) {
     });
 
     canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
         if (drawing) {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
+            const { x, y } = getCoordinates(e);
             console.log('Touch move:', x, y);
             if (isErasing) {
                 ctx.globalCompositeOperation = 'destination-out';
@@ -411,11 +431,19 @@ if (canvas && ctx) {
         }
     });
 
-    canvas.addEventListener('touchend', () => {
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
         console.log('Touch end');
         drawing = false;
         ctx.closePath();
         saveCanvasState();
+    });
+
+    // Prevent scrolling while drawing on touch devices
+    canvas.addEventListener('touchmove', (e) => {
+        if (drawing) {
+            e.preventDefault();
+        }
     });
 }
 
