@@ -39,67 +39,6 @@ let currentUser = null;
 let currentDrawing = null;
 let isErasing = false;
 
-// Zoom state variables
-let zoomLevel = 1;
-let minZoom = 0.5;
-let maxZoom = 3;
-let zoomStep = 0.1;
-let offsetX = 0;
-let offsetY = 0;
-
-// Create zoom controls dynamically
-function createZoomControls() {
-    const drawingArea = document.querySelector('.drawing-area');
-    if (!drawingArea) return;
-
-    const zoomControls = document.createElement('div');
-    zoomControls.className = 'zoom-controls';
-
-    const zoomLevelDisplay = document.createElement('span');
-    zoomLevelDisplay.className = 'zoom-level';
-    zoomLevelDisplay.textContent = `Zoom: ${Math.round(zoomLevel * 100)}%`;
-    zoomControls.appendChild(zoomLevelDisplay);
-
-    const resetZoomBtn = document.createElement('button');
-    resetZoomBtn.id = 'resetZoomBtn';
-    resetZoomBtn.textContent = 'Reset Zoom';
-    resetZoomBtn.addEventListener('click', () => {
-        zoomLevel = 1;
-        offsetX = 0;
-        offsetY = 0;
-        updateZoom();
-        zoomLevelDisplay.textContent = `Zoom: ${Math.round(zoomLevel * 100)}%`;
-        console.log('Zoom reset to 1x');
-    });
-    zoomControls.appendChild(resetZoomBtn);
-
-    drawingArea.appendChild(zoomControls);
-}
-
-// Update canvas transformation based on zoom and offset
-function updateZoom() {
-    if (!ctx || !canvas || !horseImage) return;
-
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
-    ctx.translate(offsetX, offsetY); // Apply offset for panning
-    ctx.scale(zoomLevel, zoomLevel); // Apply zoom
-
-    // Redraw the last canvas state
-    const lastState = undoHistory[undoHistory.length - 1];
-    if (lastState) {
-        const img = new Image();
-        img.src = lastState;
-        img.onload = () => {
-            ctx.drawImage(img, 0, 0);
-        };
-    }
-
-    // Update horse image scale
-    horseImage.style.transform = `scale(${zoomLevel})`;
-    horseImage.style.transformOrigin = 'top left';
-}
-
 // Logging element availability for debugging
 console.log('Canvas:', canvas);
 console.log('Context:', ctx);
@@ -209,7 +148,7 @@ function checkPublishStatus() {
     }
 }
 
-// Function to set canvas size dynamically
+// Function to set canvas size dynamically (Zoom kaldırıldı, önceki haline döndürüldü)
 function setCanvasSize() {
     if (!canvas) return;
     const container = canvas.parentElement;
@@ -224,7 +163,6 @@ function setCanvasSize() {
     ctx.scale(dpr, dpr);
 
     console.log(`Canvas size set to ${width}x${height} (dpr: ${dpr})`);
-    updateZoom();
 }
 
 // Initialize canvas settings
@@ -236,7 +174,6 @@ if (!canvas || !ctx) {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     saveCanvasState();
-    createZoomControls();
 }
 
 // Resize canvas when window size changes
@@ -398,9 +335,9 @@ if (eraserBtn) {
     });
 }
 
-// Drawing event listeners for mouse and touch interactions with zoom support
+// Drawing event listeners for mouse and touch interactions (Zoom kaldırıldı)
 if (canvas && ctx) {
-    // Function to get touch/mouse coordinates with zoom adjustment
+    // Function to get touch/mouse coordinates
     function getCoordinates(event) {
         const rect = canvas.getBoundingClientRect();
         const dpr = window.devicePixelRatio || 1;
@@ -414,10 +351,6 @@ if (canvas && ctx) {
             x = (event.clientX - rect.left) * (canvas.width / dpr) / rect.width;
             y = (event.clientY - rect.top) * (canvas.height / dpr) / rect.height;
         }
-
-        // Adjust coordinates for zoom and offset
-        x = (x - offsetX) / zoomLevel;
-        y = (y - offsetY) / zoomLevel;
 
         return { x, y };
     }
@@ -464,22 +397,7 @@ if (canvas && ctx) {
         }
     });
 
-    // Mouse wheel for zooming (PC)
-    canvas.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        const zoomLevelDisplay = document.querySelector('.zoom-level');
-        const delta = e.deltaY > 0 ? -zoomStep : zoomStep;
-        const newZoom = zoomLevel + delta;
-
-        if (newZoom >= minZoom && newZoom <= maxZoom) {
-            zoomLevel = newZoom;
-            updateZoom();
-            zoomLevelDisplay.textContent = `Zoom: ${Math.round(zoomLevel * 100)}%`;
-            console.log(`Zoom level: ${zoomLevel}`);
-        }
-    });
-
-    // Touch events for drawing
+    // Touch events
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
         const { x, y } = getCoordinates(e);
@@ -515,47 +433,9 @@ if (canvas && ctx) {
         saveCanvasState();
     });
 
-    // Pinch-to-zoom for mobile devices
-    let initialDistance = 0;
-    let initialZoom = zoomLevel;
-
-    canvas.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 2) {
-            drawing = false; // Disable drawing during pinch
-            const touch1 = e.touches[0];
-            const touch2 = e.touches[1];
-            initialDistance = Math.hypot(
-                touch1.clientX - touch2.clientX,
-                touch1.clientY - touch2.clientY
-            );
-            initialZoom = zoomLevel;
-            console.log('Pinch start, initial distance:', initialDistance);
-        }
-    });
-
+    // Prevent scrolling while drawing on touch devices
     canvas.addEventListener('touchmove', (e) => {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            const touch1 = e.touches[0];
-            const touch2 = e.touches[1];
-            const currentDistance = Math.hypot(
-                touch1.clientX - touch2.clientX,
-                touch1.clientY - touch2.clientY
-            );
-            const zoomLevelDisplay = document.querySelector('.zoom-level');
-            const zoomChange = (currentDistance / initialDistance) * initialZoom;
-            const newZoom = Math.min(maxZoom, Math.max(minZoom, zoomChange));
-
-            zoomLevel = newZoom;
-            updateZoom();
-            zoomLevelDisplay.textContent = `Zoom: ${Math.round(zoomLevel * 100)}%`;
-            console.log(`Pinch zoom level: ${zoomLevel}`);
-        }
-    });
-
-    // Prevent scrolling while drawing or zooming on touch devices
-    canvas.addEventListener('touchmove', (e) => {
-        if (drawing || e.touches.length === 2) {
+        if (drawing) {
             e.preventDefault();
         }
     });
@@ -565,17 +445,8 @@ if (canvas && ctx) {
 if (clearBtn && ctx) {
     clearBtn.addEventListener('click', () => {
         console.log('Clearing canvas');
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        zoomLevel = 1;
-        offsetX = 0;
-        offsetY = 0;
-        updateZoom();
         saveCanvasState();
-        const zoomLevelDisplay = document.querySelector('.zoom-level');
-        if (zoomLevelDisplay) {
-            zoomLevelDisplay.textContent = `Zoom: ${Math.round(zoomLevel * 100)}%`;
-        }
     });
 }
 
