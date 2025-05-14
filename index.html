@@ -3,119 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Half-Horse Drawing Challenge</title>
+    <title>Horse Gallery - Draw</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 </head>
 <body>
     <header>
         <div class="header-content">
-            <div class="logo">Half-Horse Challenge</div>
+            <span class="hamburger">☰</span>
+            <div class="logo">Horse Gallery</div>
             <div class="header-right">
                 <div class="user-info">
-                    <span>Welcome, <span id="usernameDisplay">Guest</span>!</span>
+                    <span id="usernameDisplay">Loading...</span>
                 </div>
-                <span class="hamburger">☰</span>
                 <nav class="navigation">
                     <a href="index.html" class="nav-link active">Draw</a>
                     <a href="gallery.html" class="nav-link">Gallery</a>
                 </nav>
-                <div class="contract-address">
-                    <span>Contract Address: </span>
-                    <span id="ca-text">0x1234...5678</span>
-                    <button id="copyBtn" class="copy-btn">Copy</button>
-                </div>
             </div>
         </div>
     </header>
+
+    <!-- Yeni CA bölümü -->
+    <div class="mobile-ca-section">
+        <div class="contract-address">
+            <span id="ca-text">0x1234...5678</span>
+            <button class="copy-btn">Copy</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="main-content">
             <div class="drawing-area">
                 <div class="horse-image">
-                    <img src="assets/half-horse.png" alt="Half Horse" id="half-horse" crossorigin="anonymous">
-                    <canvas id="drawingCanvas" width="1200" height="800"></canvas>
+                    <img id="half-horse" src="assets/half-horse.png" alt="Half Horse">
+                    <canvas id="drawingCanvas"></canvas>
                 </div>
             </div>
             <div class="toolbar">
                 <div class="tool-section">
+                    <h4>Actions</h4>
                     <button id="clearBtn" class="action-btn"></button>
                     <button id="undoBtn" class="action-btn"></button>
                     <button id="eraserBtn" class="action-btn"></button>
-                    <button id="publishBtn" class="publish-btn">Publish Now!</button>
                 </div>
                 <div class="tool-section">
                     <h4>Colors</h4>
                     <div class="color-buttons">
+                        <button class="color-btn" data-color="#FF0000" style="background-color: #FF0000;"></button>
+                        <button class="color-btn" data-color="#00FF00" style="background-color: #00FF00;"></button>
+                        <button class="color-btn" data-color="#0000FF" style="background-color: #0000FF;"></button>
+                        <button class="color-btn" data-color="#FFFF00" style="background-color: #FFFF00;"></button>
+                        <button class="color-btn" data-color="#FF00FF" style="background-color: #FF00FF;"></button>
+                        <button class="color-btn" data-color="#00FFFF" style="background-color: #00FFFF;"></button>
                         <button class="color-btn" data-color="#000000" style="background-color: #000000;"></button>
-                        <button class="color-btn" data-color="#ff0000" style="background-color: #ff0000;"></button>
-                        <button class="color-btn" data-color="#00ff00" style="background-color: #00ff00;"></button>
-                        <button class="color-btn" data-color="#0000ff" style="background-color: #0000ff;"></button>
-                        <button class="color-btn" data-color="#ff00ff" style="background-color: #ff00ff;"></button>
-                        <button class="color-btn" data-color="#ffff00" style="background-color: #ffff00;"></button>
-                        <button class="color-btn" data-color="#ffa500" style="background-color: #ffa500;"></button>
-                        <button class="color-btn" data-color="#800080" style="background-color: #800080;"></button>
+                        <button class="color-btn" data-color="#FFFFFF" style="background-color: #FFFFFF;"></button>
                     </div>
-                    <input type="color" id="colorPicker" value="#000000" class="custom-color-picker">
+                    <input type="color" id="colorPicker" class="custom-color-picker">
                 </div>
                 <div class="tool-section">
                     <h4>Brush Size</h4>
-                    <input type="range" id="brushSize" min="1" max="50" value="5" class="brush-size-slider">
+                    <input type="range" id="brushSize" min="1" max="50" value="10" class="brush-size-slider">
                     <div id="brushPreview" class="brush-preview"></div>
                 </div>
+                <button id="publishBtn" class="publish-btn">Publish Now!</button>
             </div>
         </div>
+
         <div class="published-drawings">
-            <h2>Latest Creations</h2>
+            <h2>Latest Drawings</h2>
             <div class="filter-bar"></div>
             <div id="gallery"></div>
         </div>
     </div>
-    <div class="modal" id="tutorialModal">
+
+    <!-- Tutorial Modal -->
+    <div id="tutorialModal" class="modal">
         <div class="modal-content tutorial-modal">
-            <h3>HALF HORSE CHALLENGE</h3>
+            <h3>Welcome to Horse Gallery!</h3>
             <ul class="rules-list">
-                <li>1. Finish the horse however you want just go wild and crazy bro no limits! 🐴</li>
-                <li>2. Hit that Publish button and show off your dope creation to everyone! 🚀</li>
-                <li>3. Dont be a jerk give some love with comments and likes to other drawings! 🦍</li>
+                <li>You can draw on the right half of the horse.</li>
+                <li>Choose colors and brush sizes to create your masterpiece.</li>
+                <li>You have only one chance to publish your drawing!</li>
             </ul>
-            <img src="assets/horse-animation.gif" alt="Horse Animation" class="tutorial-gif">
-            <button id="closeTutorialBtn" class="action-btn">Let's Get Started!</button>
+            <img src="assets/tutorial.gif" alt="Tutorial GIF" class="tutorial-gif">
+            <button id="closeTutorialBtn">Let's Get Started!</button>
         </div>
     </div>
-    <div class="modal" id="publishModal">
+
+    <!-- Publish Modal -->
+    <div id="publishModal" class="modal">
         <div class="modal-content">
             <h3>Publish Your Drawing</h3>
-            <p class="publish-warning">Each user has only one publish right!</p>
-            <input type="text" id="drawingTitle" placeholder="Enter Title" class="title-input">
-            <img id="drawingPreview" alt="Drawing Preview">
-            <button id="confirmPublishBtn" class="action-btn publish">Publish!</button>
+            <p class="publish-warning">Warning: You can only publish one drawing!</p>
+            <img id="drawingPreview" src="" alt="Drawing Preview">
+            <input type="text" id="drawingTitle" class="title-input" placeholder="Enter drawing title">
+            <button id="confirmPublishBtn" class="action-btn">Publish!</button>
         </div>
     </div>
-    <div class="modal" id="viewDrawingModal">
+
+    <!-- View Drawing Modal -->
+    <div id="viewDrawingModal" class="modal">
         <div class="modal-content view-drawing-modal">
+            <h3 id="viewDrawingTitle"></h3>
+            <p id="viewDrawingCreator"></p>
             <div class="view-drawing-content">
                 <div class="drawing-image">
-                    <img id="viewDrawingImage" alt="Full Drawing">
+                    <img id="viewDrawingImage" src="" alt="Drawing">
                 </div>
                 <div class="drawing-details">
-                    <h3 id="viewDrawingTitle">Drawing Title</h3>
-                    <p id="viewDrawingCreator">Creator: Unknown</p>
-                    <button id="likeDrawingBtn" class="action-btn">Like (<span id="likeCount">0</span>)</button>
+                    <button id="likeDrawingBtn">Like ❤️</button>
+                    <span id="likeCount">0</span>
                     <div class="comments-section">
                         <h4>Comments</h4>
                         <div id="commentsList"></div>
-                        <textarea id="commentInput" placeholder="Write a comment..." class="comment-input"></textarea>
-                        <button id="submitCommentBtn" class="action-btn">Submit Comment</button>
+                        <textarea id="commentInput" class="comment-input" placeholder="Add a comment..."></textarea>
+                        <button id="submitCommentBtn" class="action-btn">Comment</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <footer>
         <div class="footer-links">
-            <a href="#">About</a> | <a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Contact</a>
+            <a href="https://github.com/x/horse-gallery" target="_blank">GitHub</a>
+            <a href="https://x.com/horsegallery" target="_blank">X</a>
         </div>
+        <p>&copy; 2025 Horse Gallery. All rights reserved.</p>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
