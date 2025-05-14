@@ -148,13 +148,13 @@ function checkPublishStatus() {
     }
 }
 
-// Function to set canvas size dynamically (Zoom kaldırıldı, önceki haline döndürüldü)
+// Function to set canvas size dynamically with 3:2 aspect ratio
 function setCanvasSize() {
     if (!canvas) return;
     const container = canvas.parentElement;
     const dpr = window.devicePixelRatio || 1;
     const width = container.clientWidth;
-    const height = container.clientHeight;
+    const height = width * (2 / 3); // 3:2 oranı (genişlik:yükseklik)
 
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
@@ -335,7 +335,7 @@ if (eraserBtn) {
     });
 }
 
-// Drawing event listeners for mouse and touch interactions (Zoom kaldırıldı)
+// Drawing event listeners for mouse and touch interactions
 if (canvas && ctx) {
     // Function to get touch/mouse coordinates
     function getCoordinates(event) {
