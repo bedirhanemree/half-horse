@@ -171,7 +171,6 @@ header {
 .drawing-area {
     flex: 1;
     max-width: 1200px;
-    position: relative; /* Zoom için relative positioning */
 }
 
 .horse-image {
@@ -361,41 +360,6 @@ header {
 
 .brush-preview:hover {
     transform: scale(1.2);
-}
-
-/* Zoom kontrol stilleri */
-.zoom-controls {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 3;
-}
-
-.zoom-level {
-    background: #2A2F4A;
-    color: #14F195;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-size: 14px;
-    text-align: center;
-}
-
-#resetZoomBtn {
-    background: linear-gradient(90deg, #9945FF, #14F195);
-    color: #FFFFFF;
-    border-radius: 10px;
-    padding: 5px 10px;
-    font-size: 14px;
-    font-weight: 700;
-    transition: transform 0.2s, box-shadow 0.3s;
-}
-
-#resetZoomBtn:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 10px rgba(153, 69, 255, 0.5);
 }
 
 .published-drawings {
@@ -811,11 +775,11 @@ footer {
     }
     .hamburger {
         display: block;
-        order: -1; /* Hamburger menü en sola taşınır */
+        order: -1;
         margin-right: auto;
     }
     .logo {
-        font-size: 1.2em; /* Logo fontu küçültüldü */
+        font-size: 1.2em;
         order: 0;
         flex-grow: 1;
         text-align: center;
@@ -828,17 +792,17 @@ footer {
     }
     .user-info {
         order: 1;
-        font-size: 0.8em; /* Kullanıcı bilgisi fontu küçültüldü */
+        font-size: 0.8em;
     }
     .contract-address {
-        display: none; /* Mobil cihazlarda contract address gizlenir */
+        display: none;
     }
     .navigation {
         display: none;
         flex-direction: column;
         position: absolute;
         top: 100%;
-        left: 0; /* Navigasyon sola hizalanır */
+        left: 0;
         background: #2A2F4A;
         padding: 10px;
         border-radius: 10px;
@@ -851,7 +815,7 @@ footer {
     }
     .nav-link {
         padding: 10px;
-        font-size: 1em; /* Navigasyon link fontu küçültüldü */
+        font-size: 1em;
         text-align: center;
     }
 
@@ -870,11 +834,11 @@ footer {
     }
     .horse-image {
         width: 100%;
-        height: 400px;
+        height: 400px; /* Önceki ölçek (zoom öncesi) */
     }
     #drawingCanvas {
         width: 100%;
-        height: 400px;
+        height: 400px; /* Önceki ölçek (zoom öncesi) */
     }
 
     /* Toolbar düzenlemeleri */
@@ -884,65 +848,67 @@ footer {
         left: 0;
         width: 100%;
         border-radius: 15px 15px 0 0;
-        padding: 10px;
+        padding: 8px; /* Daha sıkı padding */
         display: flex;
         flex-direction: row;
-        justify-content: space-between; /* Daha iyi hizalama */
+        justify-content: space-between;
         align-items: center;
         z-index: 1000;
         background: linear-gradient(135deg, #2A2F4A, #1A1F2E);
         border: none;
-        overflow-x: auto; /* Renk butonları taşarsa kaydırma sağlar */
+        overflow-x: auto;
+        white-space: nowrap; /* Elemanlar tek satırda kalır */
     }
     .tool-section {
         margin-bottom: 0;
         display: flex;
         flex-direction: row;
-        gap: 5px;
+        gap: 3px; /* Daha sıkı aralık */
         align-items: center;
     }
     .tool-section h4 {
         display: none;
-        font-size: 1em; /* Toolbar başlık fontu küçültüldü */
+        font-size: 1em;
     }
     .action-btn {
-        width: 60px;
-        height: 40px;
-        font-size: 12px; /* Buton fontu küçültüldü */
-        padding: 5px;
+        width: 50px; /* Daha küçük butonlar */
+        height: 35px;
+        font-size: 10px; /* Daha küçük font */
+        padding: 3px;
     }
     .publish-btn {
-        width: 80px;
-        height: 40px;
-        font-size: 12px;
-        padding: 5px;
+        width: 70px;
+        height: 35px;
+        font-size: 10px;
+        padding: 3px;
     }
     .color-buttons {
-        grid-template-columns: repeat(8, 25px); /* Daha sıkı grid */
-        gap: 3px;
-        max-width: 100%; /* Taşmayı engelle */
+        grid-template-columns: repeat(8, 20px); /* Daha küçük ve sıkı grid */
+        gap: 2px;
+        max-width: fit-content;
     }
     .color-btn {
-        width: 25px; /* Renk butonları küçültüldü */
-        height: 25px;
+        width: 20px; /* Daha küçük renk butonları */
+        height: 20px;
     }
     .custom-color-picker {
-        width: 40px; /* Renk seçici küçültüldü */
-        height: 30px;
-        margin-left: 5px;
+        width: 30px; /* Daha küçük renk seçici */
+        height: 25px;
+        margin-left: 3px;
     }
     .brush-size-slider {
-        width: 80px; /* Slider küçültüldü */
+        width: 60px; /* Daha küçük slider */
+        height: 6px;
     }
     .brush-preview {
-        width: 30px;
-        height: 30px;
-        margin: 0 5px;
+        width: 25px; /* Daha küçük önizleme */
+        height: 25px;
+        margin: 0 3px;
     }
 
     /* Galeri ve diğer bölümler */
     .published-drawings h2 {
-        font-size: 1.4em; /* Galeri başlığı fontu küçültüldü */
+        font-size: 1.4em;
     }
     #gallery {
         flex-direction: column;
@@ -957,10 +923,10 @@ footer {
         max-height: 200px;
     }
     .gallery-item .creator {
-        font-size: 10px; /* Yaratıcı fontu küçültüldü */
+        font-size: 10px;
     }
     .gallery-item .stats {
-        font-size: 12px; /* İstatistik fontu küçültüldü */
+        font-size: 12px;
     }
 
     /* Modal düzenlemeleri */
@@ -972,13 +938,13 @@ footer {
         padding: 15px;
     }
     .modal-content h3 {
-        font-size: 1.2em; /* Modal başlığı fontu küçültüldü */
+        font-size: 1.2em;
     }
     .tutorial-modal {
         width: 90%;
     }
     .rules-list {
-        font-size: 1em; /* Kurallar fontu küçültüldü */
+        font-size: 1em;
     }
     .tutorial-gif {
         width: 100%;
@@ -986,9 +952,9 @@ footer {
         max-height: 200px;
     }
     #closeTutorialBtn {
-        padding: 15px 25px; /* Buton boyutu büyütüldü */
-        font-size: 14px; /* Font boyutu artırıldı */
-        width: 80%; /* Daha geniş bir buton */
+        padding: 15px 25px;
+        font-size: 14px;
+        width: 80%;
         margin: 0 auto;
     }
     .view-drawing-modal {
@@ -1002,21 +968,6 @@ footer {
     }
     .comment-input {
         height: 80px;
-        font-size: 12px; /* Yorum alanı fontu küçültüldü */
-    }
-
-    /* Zoom kontrol stilleri mobil için */
-    .zoom-controls {
-        top: 5px;
-        right: 5px;
-        gap: 5px;
-    }
-    .zoom-level {
         font-size: 12px;
-        padding: 3px 8px;
-    }
-    #resetZoomBtn {
-        font-size: 12px;
-        padding: 3px 8px;
     }
 }
