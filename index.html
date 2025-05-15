@@ -6,8 +6,20 @@
     <title>Horse Gallery - Draw</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 </head>
 <body>
+    <!-- Mobile CA Section -->
+    <div class="mobile-ca-section">
+        <div class="contract-address">
+            <span id="ca-text">0x1234...5678</span>
+            <button class="copy-btn" id="copyBtn">Copy</button>
+        </div>
+    </div>
+
     <header>
         <div class="header-content">
             <span class="hamburger">☰</span>
@@ -23,14 +35,6 @@
             </div>
         </div>
     </header>
-
-    <!-- Yeni CA bölümü -->
-    <div class="mobile-ca-section">
-        <div class="contract-address">
-            <span id="ca-text">0x1234...5678</span>
-            <button class="copy-btn">Copy</button>
-        </div>
-    </div>
 
     <div class="container">
         <div class="main-content">
@@ -130,7 +134,7 @@
             <a href="https://github.com/x/horse-gallery" target="_blank">GitHub</a>
             <a href="https://x.com/horsegallery" target="_blank">X</a>
         </div>
-        <p>&copy; 2025 Horse Gallery. All rights reserved.</p>
+        <p>© 2025 Horse Gallery. All rights reserved.</p>
     </footer>
 
     <script src="script.js"></script>
