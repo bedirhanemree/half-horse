@@ -14,6 +14,8 @@ firebase.initializeApp(firebaseConfig);
 // Firestore ve Storage referansları
 const db = firebase.firestore();
 const storage = firebase.storage();
+
+// Element selections for the drawing application
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 const clearBtn = document.getElementById('clearBtn');
@@ -545,20 +547,28 @@ function hideLoading() {
     if (loading) loading.style.display = 'none';
 }
 
-// Function to load drawings from localStorage with filtering
-function loadDrawings(filter = 'latest') {
+// Function to load drawings from Firestore with filtering
+async function loadDrawings(filter = 'latest') {
     console.log(`Loading drawings with filter: ${filter}`);
     if (!gallery) {
         console.error('Gallery element not found.');
         return;
     }
 
-    const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-    console.log('Loaded drawings from localStorage:', drawings);
-
     gallery.innerHTML = '';
-    if (drawings.length === 0) {
-        console.log('No drawings found in localStorage.');
+    let query = db.collection('drawings');
+
+    if (filter === 'popular') {
+        query = query.orderBy('likes', 'desc');
+    } else {
+        query = query.orderBy('timestamp', 'desc');
+    }
+
+    const isHomePage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
+    const snapshot = await (isHomePage ? query.limit(5) : query).get();
+
+    if (snapshot.empty) {
+        console.log('No drawings found in Firestore.');
         const message = document.createElement('p');
         message.textContent = 'No drawings yet.';
         message.style.color = '#FFFFFF';
@@ -566,17 +576,12 @@ function loadDrawings(filter = 'latest') {
         return;
     }
 
-    let sortedDrawings = [...drawings];
-    if (filter === 'popular') {
-        sortedDrawings.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
-    } else {
-        sortedDrawings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    }
+    const drawings = [];
+    snapshot.forEach((doc) => {
+        drawings.push({ id: doc.id, ...doc.data() });
+    });
 
-    const isHomePage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
-    const drawingsToShow = isHomePage ? sortedDrawings.slice(0, 5) : sortedDrawings;
-
-    drawingsToShow.forEach((drawing, index) => {
+    drawings.forEach((drawing) => {
         console.log('Rendering drawing:', drawing);
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
@@ -601,21 +606,20 @@ function loadDrawings(filter = 'latest') {
 
         const commentCount = document.createElement('span');
         commentCount.className = 'comment-count';
-        commentCount.textContent = (drawing.comments || []).length;
+        commentCount.textContent = drawing.commentCount || 0; // Dinamik olarak güncellenecek
         stats.appendChild(commentCount);
 
         galleryItem.appendChild(stats);
 
-        galleryItem.addEventListener('click', () => {
+        galleryItem.addEventListener('click', async () => {
             console.log('Gallery item clicked:', drawing.title);
             if (viewDrawingModal && viewDrawingImage && viewDrawingTitle && viewDrawingCreator) {
-                const originalIndex = drawings.findIndex(d => d.timestamp === drawing.timestamp);
-                currentDrawing = { ...drawing, index: originalIndex };
+                currentDrawing = drawing;
                 viewDrawingImage.src = drawing.image;
                 viewDrawingTitle.textContent = drawing.title || 'Untitled';
                 viewDrawingCreator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
                 viewDrawingModal.style.display = 'flex';
-                updateLikesAndComments();
+                await updateLikesAndComments();
             } else {
                 console.error('View drawing modal elements not found.');
             }
@@ -652,10 +656,16 @@ function setupFilterButtons() {
 }
 
 // Function to update likes and comments in the view drawing modal
-function updateLikesAndComments() {
+async function updateLikesAndComments() {
     if (!currentDrawing || !likeCount || !commentsList || !likeDrawingBtn) return;
 
-    const likes = currentDrawing.likes || [];
+    const drawingRef = db.collection('drawings').doc(currentDrawing.id);
+    const commentsSnapshot = await drawingRef.collection('comments').orderBy('timestamp', 'desc').get();
+
+    // Beğenileri güncelle
+    const drawingDoc = await drawingRef.get();
+    const drawingData = drawingDoc.data();
+    const likes = drawingData.likes || [];
     likeCount.textContent = likes.length;
     if (currentUser && likes.includes(currentUser.userId)) {
         likeDrawingBtn.classList.add('liked');
@@ -663,15 +673,16 @@ function updateLikesAndComments() {
         likeDrawingBtn.classList.remove('liked');
     }
 
+    // Yorumları güncelle
     commentsList.innerHTML = '';
-    const comments = currentDrawing.comments || [];
-    if (comments.length === 0) {
+    if (commentsSnapshot.empty) {
         const noComments = document.createElement('p');
         noComments.textContent = 'No comments yet.';
         noComments.style.color = '#999';
         commentsList.appendChild(noComments);
     } else {
-        comments.forEach(comment => {
+        commentsSnapshot.forEach((doc) => {
+            const comment = doc.data();
             const commentDiv = document.createElement('div');
             commentDiv.className = 'comment';
 
@@ -682,7 +693,7 @@ function updateLikesAndComments() {
 
             const timestamp = document.createElement('span');
             timestamp.className = 'timestamp';
-            timestamp.textContent = ` (${new Date(comment.timestamp).toLocaleString()})`;
+            timestamp.textContent = ` (${new Date(comment.timestamp.toDate()).toLocaleString()})`;
             commentDiv.appendChild(timestamp);
 
             const text = document.createElement('p');
@@ -694,45 +705,43 @@ function updateLikesAndComments() {
         });
     }
 
+    // Yorum sayısını güncelle
+    const commentCount = commentsSnapshot.size;
+    drawingRef.update({ commentCount: commentCount });
+
     loadDrawings();
 }
 
 // Event listener for liking a drawing
 if (likeDrawingBtn) {
-    likeDrawingBtn.addEventListener('click', () => {
+    likeDrawingBtn.addEventListener('click', async () => {
         if (!currentUser || !currentDrawing) return;
 
-        const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-        const drawing = drawings[currentDrawing.index];
-        if (!drawing.likes) drawing.likes = [];
+        const drawingRef = db.collection('drawings').doc(currentDrawing.id);
+        const drawingDoc = await drawingRef.get();
+        const drawingData = drawingDoc.data();
+        let likes = drawingData.likes || [];
 
         const userId = currentUser.userId;
-        const index = drawing.likes.indexOf(userId);
+        const index = likes.indexOf(userId);
 
         if (index === -1) {
-            drawing.likes.push(userId);
-            console.log('Liked drawing:', drawing.title);
+            likes.push(userId);
+            console.log('Liked drawing:', drawingData.title);
         } else {
-            drawing.likes.splice(index, 1);
-            console.log('Unliked drawing:', drawing.title);
+            likes.splice(index, 1);
+            console.log('Unliked drawing:', drawingData.title);
         }
 
-        drawings[currentDrawing.index] = drawing;
-        try {
-            localStorage.setItem('drawings', JSON.stringify(drawings));
-            console.log('Drawings updated in localStorage');
-        } catch (err) {
-            console.error('Failed to save drawings to localStorage:', err);
-            alert('Error saving drawing. LocalStorage might be full.');
-        }
-        currentDrawing = { ...drawing, index: currentDrawing.index };
-        updateLikesAndComments();
+        await drawingRef.update({ likes: likes });
+        currentDrawing.likes = likes;
+        await updateLikesAndComments();
     });
 }
 
 // Event listener for submitting a comment
 if (submitCommentBtn) {
-    submitCommentBtn.addEventListener('click', () => {
+    submitCommentBtn.addEventListener('click', async () => {
         if (!currentUser || !currentDrawing || !commentInput) return;
 
         const commentText = commentInput.value.trim();
@@ -741,30 +750,21 @@ if (submitCommentBtn) {
             return;
         }
 
-        const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-        const drawing = drawings[currentDrawing.index];
-        if (!drawing.comments) drawing.comments = [];
+        // Yorumu Firestore'a ekle
+        await db
+            .collection('drawings')
+            .doc(currentDrawing.id)
+            .collection('comments')
+            .add({
+                userId: currentUser.userId,
+                username: currentUser.username,
+                comment: commentText,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
 
-        const newComment = {
-            userId: currentUser.userId,
-            username: currentUser.username,
-            comment: commentText,
-            timestamp: new Date().toISOString()
-        };
-
-        drawing.comments.push(newComment);
-        drawings[currentDrawing.index] = drawing;
-        try {
-            localStorage.setItem('drawings', JSON.stringify(drawings));
-            console.log('Drawings updated in localStorage');
-        } catch (err) {
-            console.error('Failed to save drawings to localStorage:', err);
-            alert('Error saving comment. LocalStorage might be full.');
-        }
-        currentDrawing = { ...drawing, index: currentDrawing.index };
         commentInput.value = '';
-        updateLikesAndComments();
-        console.log('Comment added:', newComment);
+        await updateLikesAndComments();
+        console.log('Comment added:', commentText);
     });
 }
 
@@ -816,7 +816,7 @@ if (confirmPublishBtn) {
     confirmPublishBtn.addEventListener('click', () => {
         console.log('Confirm Publish button clicked.');
         showLoading();
-        setTimeout(() => {
+        setTimeout(async () => {
             if (!drawingPreview) {
                 console.error('Drawing preview not found.');
                 hideLoading();
@@ -831,32 +831,44 @@ if (confirmPublishBtn) {
             const dataURL = drawingPreview.src;
             const title = drawingTitle.value.trim() || 'Untitled';
 
-            const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-            drawings.push({
-                image: dataURL,
-                title: title,
-                creator: currentUser ? currentUser.username : 'Unknown',
-                likes: [],
-                comments: [],
-                timestamp: new Date().toISOString()
-            });
-            try {
-                localStorage.setItem('drawings', JSON.stringify(drawings));
-                console.log('Saved drawing to localStorage:', { image: dataURL, title: title, creator: currentUser ? currentUser.username : 'Unknown' });
-            } catch (err) {
-                console.error('Failed to save drawings to localStorage:', err);
-                alert('Error saving drawing. LocalStorage might be full.');
-            }
+            // Resmi Firebase Storage'a yükle
+            const storageRef = storage.ref(`drawings/${currentUser.userId}/${Date.now()}.png`);
+            const uploadTask = storageRef.putString(dataURL, 'data_url');
 
-            currentUser.hasPublished = true;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            console.log('User has published, updated hasPublished status:', currentUser);
+            uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload progress:', progress);
+                },
+                (error) => {
+                    console.error('Upload failed:', error);
+                    hideLoading();
+                },
+                async () => {
+                    // Resim yüklendi, URL'yi al
+                    const imageURL = await uploadTask.snapshot.ref.getDownloadURL();
 
-            checkPublishStatus();
+                    // Firestore'a resmi kaydet
+                    const drawingRef = await db.collection('drawings').add({
+                        image: imageURL,
+                        title: title,
+                        creator: currentUser ? currentUser.username : 'Unknown',
+                        likes: [],
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
 
-            loadDrawings();
-            publishModal.style.display = 'none';
-            hideLoading();
+                    // Kullanıcının yayınlama durumunu güncelle
+                    currentUser.hasPublished = true;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    console.log('User has published, updated hasPublished status:', currentUser);
+
+                    checkPublishStatus();
+                    loadDrawings();
+                    publishModal.style.display = 'none';
+                    hideLoading();
+                }
+            );
         }, 1000);
     });
 }
@@ -893,8 +905,3 @@ if (copyBtn && caText) {
         });
     });
 }
-
-// Additional spacing to ensure line count exceeds 800
-// (These comments are added to meet the line count requirement without affecting functionality)
-
-// End of script.js
