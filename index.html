@@ -6,6 +6,10 @@
     <title>Horse Gallery - Draw</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
 </head>
 <body>
     <header>
@@ -24,7 +28,6 @@
         </div>
     </header>
 
-    <!-- Yeni CA bölümü -->
     <div class="mobile-ca-section">
         <div class="contract-address">
             <span id="ca-text">0x1234...5678</span>
@@ -133,10 +136,24 @@
         <p>&copy; 2025 Horse Gallery. All rights reserved.</p>
     </footer>
 
-    <!-- FIREBASE CDN'LARI EN SONDA -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <!-- KENDİ JS DOSYAN -->
+    <!-- Firebase config & scripts -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCx8csM2JxgYovwRztwS3mEbZ5gI0cAlKU",
+            authDomain: "half-horse.firebaseapp.com",
+            projectId: "half-horse",
+            storageBucket: "half-horse.firebasestorage.app",
+            messagingSenderId: "525655781118",
+            appId: "1:525655781118:web:f1d0a8035021d312c77faf",
+            measurementId: "G-3HJF5E63TC"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        // Artık db ile Firestore'a erişebilirsin!
+        // Devamında kendi script.js dosyanı ekle
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
