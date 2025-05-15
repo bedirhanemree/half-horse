@@ -1,3 +1,31 @@
+// Firebase ve Firestore importları
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCx8csM2JxgYovwRztwS3mEbZ5gI0cAlKU",
+  authDomain: "half-horse.firebaseapp.com",
+  projectId: "half-horse",
+  storageBucket: "half-horse.firebasestorage.app",
+  messagingSenderId: "525655781118",
+  appId: "1:525655781118:web:f1d0a8035021d312c77faf",
+  measurementId: "G-3HJF5E63TC"
+};
+
+// Firebase'i başlat
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Firestore’a veri ekleme örneği
+async function addDrawing(data) {
+  await addDoc(collection(db, "drawings"), data);
+}
+
+// Firestore’dan veri çekme örneği
+async function getDrawings() {
+  const snapshot = await getDocs(collection(db, "drawings"));
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
 // Element selections for the drawing application
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
