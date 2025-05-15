@@ -11,18 +11,19 @@ const firebaseConfig = {
 
 // Firebase'i başlat
 firebase.initializeApp(firebaseConfig);
+
 // Firestore'u başlat
 const db = firebase.firestore();
 
 // Firestore'a veri ekleme örneği
 async function addDrawing(data) {
-    await db.collection("drawings").add(data);
+  await db.collection("drawings").add(data);
 }
 
 // Firestore’dan veri çekme örneği
 async function getDrawings() {
-    const snapshot = await db.collection("drawings").get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const snapshot = await db.collection("drawings").get();
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 // Element selections for the drawing application
 const canvas = document.getElementById('drawingCanvas');
