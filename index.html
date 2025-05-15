@@ -6,6 +6,9 @@
     <title>Horse Gallery - Draw</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <!-- FIREBASE CDN SCRIPTLERİ EKLENDİ -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <header>
@@ -24,6 +27,7 @@
         </div>
     </header>
 
+    <!-- Yeni CA bölümü -->
     <div class="mobile-ca-section">
         <div class="contract-address">
             <span id="ca-text">0x1234...5678</span>
@@ -132,10 +136,7 @@
         <p>&copy; 2025 Horse Gallery. All rights reserved.</p>
     </footer>
 
-    <!-- FIREBASE CDN SCRIPTLERİ: -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
-    <!-- KENDİ SCRIPTİN EN SONDA: -->
+    <!-- SENİN JAVASCRIPT DOSYAN EN SONDA OLACAK -->
     <script src="script.js"></script>
 </body>
 </html>
