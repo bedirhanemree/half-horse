@@ -1,4 +1,19 @@
-// Element selections for the drawing application
+// Firebase yapılandırması
+const firebaseConfig = {
+    apiKey: "AIzaSyCx8csM2JxgYovwRztwS3mEbZ5gI0cAlKU",
+    authDomain: "half-horse.firebaseapp.com",
+    projectId: "half-horse",
+    storageBucket: "half-horse.firebasestorage.app",
+    messagingSenderId: "525655781118",
+    appId: "1:525655781118:web:989d15b06737544bc77faf"
+};
+
+// Firebase'i başlat
+firebase.initializeApp(firebaseConfig);
+
+// Firestore ve Storage referansları
+const db = firebase.firestore();
+const storage = firebase.storage();
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 const clearBtn = document.getElementById('clearBtn');
