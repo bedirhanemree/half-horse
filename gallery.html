@@ -6,7 +6,8 @@
     <title>Horse Gallery - Gallery</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for additional icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
@@ -16,7 +17,9 @@
             <div class="header-right">
                 <div class="user-info">
                     <span id="usernameDisplay">Loading...</span>
-                    <button id="editUsernameBtn" title="Edit username">✏️</button>
+                    <button id="editUsernameBtn" class="edit-username-btn" title="Edit Username">
+                        <i class="fas fa-edit"></i>
+                    </button>
                 </div>
                 <nav class="navigation">
                     <a href="index.html" class="nav-link">Draw</a>
@@ -26,7 +29,19 @@
         </div>
     </header>
 
-    <!-- CA bölümü -->
+    <!-- Username Edit Modal -->
+    <div id="editUsernameModal" class="modal">
+        <div class="modal-content username-edit-modal">
+            <h3>Edit Username</h3>
+            <input type="text" id="newUsernameInput" class="username-input" placeholder="Enter new username">
+            <div class="username-modal-actions">
+                <button id="saveUsernameBtn" class="action-btn">Save</button>
+                <button id="cancelUsernameBtn" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Contract Address Section -->
     <div class="mobile-ca-section">
         <div class="contract-address">
             <span id="ca-text">0x1234...5678</span>
@@ -37,8 +52,11 @@
     <div class="container">
         <div class="published-drawings">
             <h2>All Drawings</h2>
-            <div class="filter-bar"></div>
-            <div id="gallery"></div>
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="latest">Latest</button>
+                <button class="filter-btn" data-filter="popular">Most Liked</button>
+            </div>
+            <div id="gallery" class="expanded-gallery"></div>
         </div>
     </div>
 
@@ -50,7 +68,6 @@
             <div class="view-drawing-content">
                 <div class="drawing-image">
                     <img id="viewDrawingImage" src="" alt="Drawing">
-                    <button id="downloadViewedImageBtn" class="download-btn">Download</button>
                 </div>
                 <div class="drawing-details">
                     <button id="likeDrawingBtn">Like ❤️</button>
@@ -63,23 +80,36 @@
                     </div>
                 </div>
             </div>
+            <button id="closeViewDrawingBtn" class="close-modal-btn">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
 
-    <!-- Edit Username Modal -->
-    <div id="editUsernameModal" class="modal">
-        <div class="modal-content">
-            <h3>Edit Your Username</h3>
-            <input type="text" id="newUsername" class="title-input" placeholder="Enter new username">
-            <p class="username-info">Choose a unique username to identify your drawings!</p>
-            <button id="saveUsernameBtn" class="action-btn">Save Username</button>
+    <!-- Statistics Modal -->
+    <div id="statisticsModal" class="modal">
+        <div class="modal-content statistics-modal">
+            <h3>Gallery Statistics</h3>
+            <div id="galleryStats">
+                <p>Total Drawings: <span id="totalDrawingsCount">0</span></p>
+                <p>Most Active Creator: <span id="mostActiveCreator">-</span></p>
+                <p>Most Liked Drawing: <span id="mostLikedDrawing">-</span></p>
+            </div>
+            <button id="closeStatisticsBtn" class="action-btn">Close</button>
         </div>
     </div>
 
     <footer>
         <div class="footer-links">
-            <a href="https://github.com/x/horse-gallery" target="_blank">GitHub</a>
-            <a href="https://x.com/horsegallery" target="_blank">X</a>
+            <a href="https://github.com/x/horse-gallery" target="_blank">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+            <a href="https://x.com/horsegallery" target="_blank">
+                <i class="fab fa-twitter"></i> X
+            </a>
+            <button id="showStatisticsBtn" class="statistics-btn">
+                <i class="fas fa-chart-bar"></i> Gallery Stats
+            </button>
         </div>
         <p>&copy; 2025 Horse Gallery. All rights reserved.</p>
     </footer>
