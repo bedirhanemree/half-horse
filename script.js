@@ -156,13 +156,13 @@ function setCanvasSize() {
     const width = container.clientWidth;
     const height = width * (2 / 3); // 3:2 oranı (genişlik:yükseklik)
 
-    canvas.style.width = ${width}px;
-    canvas.style.height = ${height}px;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
 
-    console.log(Canvas size set to ${width}x${height} (dpr: ${dpr}));
+    console.log(`Canvas size set to ${width}x${height} (dpr: ${dpr})`);
 }
 
 // Initialize canvas settings
