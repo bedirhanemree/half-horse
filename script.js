@@ -88,7 +88,7 @@ function generateRandomUsername() {
     const word1 = wordPool[Math.floor(Math.random() * wordPool.length)];
     const word2 = wordPool[Math.floor(Math.random() * wordPool.length)];
     const number = Math.floor(Math.random() * 100) + 1;
-    return ${word1}${word2}${number};
+    return `${word1}${word2}${number}`;
 }
 
 // Initialize user based on IP address
