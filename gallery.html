@@ -6,6 +6,7 @@
     <title>Horse Gallery - Gallery</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -15,6 +16,7 @@
             <div class="header-right">
                 <div class="user-info">
                     <span id="usernameDisplay">Loading...</span>
+                    <button id="editUsernameBtn" title="Edit username">✏️</button>
                 </div>
                 <nav class="navigation">
                     <a href="index.html" class="nav-link">Draw</a>
@@ -24,7 +26,7 @@
         </div>
     </header>
 
-    <!-- Yeni CA bölümü -->
+    <!-- CA bölümü -->
     <div class="mobile-ca-section">
         <div class="contract-address">
             <span id="ca-text">0x1234...5678</span>
@@ -48,6 +50,7 @@
             <div class="view-drawing-content">
                 <div class="drawing-image">
                     <img id="viewDrawingImage" src="" alt="Drawing">
+                    <button id="downloadViewedImageBtn" class="download-btn">Download</button>
                 </div>
                 <div class="drawing-details">
                     <button id="likeDrawingBtn">Like ❤️</button>
@@ -60,6 +63,16 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Edit Username Modal -->
+    <div id="editUsernameModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Your Username</h3>
+            <input type="text" id="newUsername" class="title-input" placeholder="Enter new username">
+            <p class="username-info">Choose a unique username to identify your drawings!</p>
+            <button id="saveUsernameBtn" class="action-btn">Save Username</button>
         </div>
     </div>
 
