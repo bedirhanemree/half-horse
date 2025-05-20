@@ -1,30 +1,3 @@
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyCx8csM2JxgYovwRztwS3mEbZ5gI0cAlKU",
-  authDomain: "half-horse.firebaseapp.com",
-  projectId: "half-horse",
-  storageBucket: "half-horse.firebasestorage.app",
-  messagingSenderId: "525655781118",
-  appId: "1:525655781118:web:f1d0a8035021d312c77faf",
-  measurementId: "G-3HJF5E63TC"
-};
-
-// Firebase'i başlat
-firebase.initializeApp(firebaseConfig);
-
-// Firestore'u başlat
-const db = firebase.firestore();
-
-// Firestore'a veri ekleme örneği
-async function addDrawing(data) {
-  await db.collection("drawings").add(data);
-}
-
-// Firestore’dan veri çekme örneği
-async function getDrawings() {
-  const snapshot = await db.collection("drawings").get();
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-}
 // Element selections for the drawing application
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
@@ -115,7 +88,7 @@ function generateRandomUsername() {
     const word1 = wordPool[Math.floor(Math.random() * wordPool.length)];
     const word2 = wordPool[Math.floor(Math.random() * wordPool.length)];
     const number = Math.floor(Math.random() * 100) + 1;
-    return `${word1}${word2}${number}`;
+    return ${word1}${word2}${number};
 }
 
 // Initialize user based on IP address
@@ -183,13 +156,13 @@ function setCanvasSize() {
     const width = container.clientWidth;
     const height = width * (2 / 3); // 3:2 oranı (genişlik:yükseklik)
 
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
+    canvas.style.width = ${width}px;
+    canvas.style.height = ${height}px;
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
 
-    console.log(`Canvas size set to ${width}x${height} (dpr: ${dpr})`);
+    console.log(Canvas size set to ${width}x${height} (dpr: ${dpr}));
 }
 
 // Initialize canvas settings
@@ -250,12 +223,12 @@ function updateBrushPreview() {
     if (!brushPreview || !brushSize) return;
 
     const size = parseInt(brushSize.value);
-    brushPreview.style.width = `${size}px`;
-    brushPreview.style.height = `${size}px`;
+    brushPreview.style.width = ${size}px;
+    brushPreview.style.height = ${size}px;
     if (isErasing) {
         brushPreview.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
     } else {
-        brushPreview.style.backgroundColor = `${currentColor}80`;
+        brushPreview.style.backgroundColor = ${currentColor}80;
     }
 }
 
@@ -559,7 +532,7 @@ function hideLoading() {
 
 // Function to load drawings from localStorage with filtering
 function loadDrawings(filter = 'latest') {
-    console.log(`Loading drawings with filter: ${filter}`);
+    console.log(Loading drawings with filter: ${filter});
     if (!gallery) {
         console.error('Gallery element not found.');
         return;
@@ -600,7 +573,7 @@ function loadDrawings(filter = 'latest') {
 
         const creator = document.createElement('p');
         creator.className = 'creator';
-        creator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
+        creator.textContent = Creator: ${drawing.creator || 'Unknown'};
         galleryItem.appendChild(creator);
 
         const stats = document.createElement('div');
@@ -625,7 +598,7 @@ function loadDrawings(filter = 'latest') {
                 currentDrawing = { ...drawing, index: originalIndex };
                 viewDrawingImage.src = drawing.image;
                 viewDrawingTitle.textContent = drawing.title || 'Untitled';
-                viewDrawingCreator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
+                viewDrawingCreator.textContent = Creator: ${drawing.creator || 'Unknown'};
                 viewDrawingModal.style.display = 'flex';
                 updateLikesAndComments();
             } else {
@@ -657,7 +630,7 @@ function setupFilterButtons() {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             loadDrawings(filter.id);
-            console.log(`Filter changed to: ${filter.id}`);
+            console.log(Filter changed to: ${filter.id});
         });
         filterBar.appendChild(btn);
     });
@@ -694,7 +667,7 @@ function updateLikesAndComments() {
 
             const timestamp = document.createElement('span');
             timestamp.className = 'timestamp';
-            timestamp.textContent = ` (${new Date(comment.timestamp).toLocaleString()})`;
+            timestamp.textContent =  (${new Date(comment.timestamp).toLocaleString()});
             commentDiv.appendChild(timestamp);
 
             const text = document.createElement('p');
