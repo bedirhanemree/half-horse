@@ -6,7 +6,8 @@
     <title>Horse Gallery - Draw</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for additional icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
@@ -16,7 +17,9 @@
             <div class="header-right">
                 <div class="user-info">
                     <span id="usernameDisplay">Loading...</span>
-                    <button id="editUsernameBtn" title="Edit username">✏️</button>
+                    <button id="editUsernameBtn" class="edit-username-btn" title="Edit Username">
+                        <i class="fas fa-edit"></i>
+                    </button>
                 </div>
                 <nav class="navigation">
                     <a href="index.html" class="nav-link active">Draw</a>
@@ -26,7 +29,19 @@
         </div>
     </header>
 
-    <!-- CA bölümü -->
+    <!-- Username Edit Modal -->
+    <div id="editUsernameModal" class="modal">
+        <div class="modal-content username-edit-modal">
+            <h3>Edit Username</h3>
+            <input type="text" id="newUsernameInput" class="username-input" placeholder="Enter new username">
+            <div class="username-modal-actions">
+                <button id="saveUsernameBtn" class="action-btn">Save</button>
+                <button id="cancelUsernameBtn" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Contract Address Section -->
     <div class="mobile-ca-section">
         <div class="contract-address">
             <span id="ca-text">0x1234...5678</span>
@@ -43,12 +58,22 @@
                 </div>
             </div>
             <div class="toolbar">
-                <div class="tool-section">
+                <div class="tool-section drawing-actions">
                     <h4>Actions</h4>
-                    <button id="clearBtn" class="action-btn"></button>
-                    <button id="undoBtn" class="action-btn"></button>
-                    <button id="eraserBtn" class="action-btn"></button>
-                    <button id="downloadBtn" class="action-btn">Download</button>
+                    <div class="action-buttons">
+                        <button id="clearBtn" class="action-btn" title="Clear Canvas">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button id="undoBtn" class="action-btn" title="Undo">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button id="eraserBtn" class="action-btn" title="Eraser">
+                            <i class="fas fa-eraser"></i>
+                        </button>
+                        <button id="saveDrawingBtn" class="action-btn" title="Save Drawing">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="tool-section">
                     <h4>Colors</h4>
@@ -88,7 +113,8 @@
                 <li>You can draw on the right half of the horse.</li>
                 <li>Choose colors and brush sizes to create your masterpiece.</li>
                 <li>You have only one chance to publish your drawing!</li>
-                <li>Feel free to download your creation anytime!</li>
+                <li>Edit your username by clicking the pencil icon.</li>
+                <li>Save or download your drawing anytime.</li>
             </ul>
             <img src="assets/horse-animation.gif" alt="Tutorial GIF" class="tutorial-gif">
             <button id="closeTutorialBtn">Let's Get Started!</button>
@@ -97,12 +123,15 @@
 
     <!-- Publish Modal -->
     <div id="publishModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content publish-modal">
             <h3>Publish Your Drawing</h3>
             <p class="publish-warning">Warning: You can only publish one drawing!</p>
             <img id="drawingPreview" src="" alt="Drawing Preview">
             <input type="text" id="drawingTitle" class="title-input" placeholder="Enter drawing title">
-            <button id="confirmPublishBtn" class="action-btn">Publish!</button>
+            <div class="publish-actions">
+                <button id="confirmPublishBtn" class="action-btn">Publish!</button>
+                <button id="cancelPublishBtn" class="cancel-btn">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -114,7 +143,6 @@
             <div class="view-drawing-content">
                 <div class="drawing-image">
                     <img id="viewDrawingImage" src="" alt="Drawing">
-                    <button id="downloadViewedImageBtn" class="download-btn">Download</button>
                 </div>
                 <div class="drawing-details">
                     <button id="likeDrawingBtn">Like ❤️</button>
@@ -127,23 +155,20 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Edit Username Modal -->
-    <div id="editUsernameModal" class="modal">
-        <div class="modal-content">
-            <h3>Edit Your Username</h3>
-            <input type="text" id="newUsername" class="title-input" placeholder="Enter new username">
-            <p class="username-info">Choose a unique username to identify your drawings!</p>
-            <button id="saveUsernameBtn" class="action-btn">Save Username</button>
+            <button id="closeViewDrawingBtn" class="close-modal-btn">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
 
     <footer>
         <div class="footer-links">
-            <a href="https://github.com/x/horse-gallery" target="_blank">GitHub</a>
-            <a href="https://x.com/horsegallery" target="_blank">X</a>
+            <a href="https://github.com/x/horse-gallery" target="_blank">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+            <a href="https://x.com/horsegallery" target="_blank">
+                <i class="fab fa-twitter"></i> X
+            </a>
         </div>
         <p>&copy; 2025 Horse Gallery. All rights reserved.</p>
     </footer>
