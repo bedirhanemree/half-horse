@@ -6,6 +6,7 @@
     <title>Horse Gallery - Draw</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -15,6 +16,7 @@
             <div class="header-right">
                 <div class="user-info">
                     <span id="usernameDisplay">Loading...</span>
+                    <button id="editUsernameBtn" title="Edit username">✏️</button>
                 </div>
                 <nav class="navigation">
                     <a href="index.html" class="nav-link active">Draw</a>
@@ -24,7 +26,7 @@
         </div>
     </header>
 
-    <!-- Yeni CA bölümü -->
+    <!-- CA bölümü -->
     <div class="mobile-ca-section">
         <div class="contract-address">
             <span id="ca-text">0x1234...5678</span>
@@ -46,6 +48,7 @@
                     <button id="clearBtn" class="action-btn"></button>
                     <button id="undoBtn" class="action-btn"></button>
                     <button id="eraserBtn" class="action-btn"></button>
+                    <button id="downloadBtn" class="action-btn">Download</button>
                 </div>
                 <div class="tool-section">
                     <h4>Colors</h4>
@@ -63,7 +66,7 @@
                 </div>
                 <div class="tool-section">
                     <h4>Brush Size</h4>
-                    <input type="range" id="brushSize" min="1" max="50" value="10" class="brush-size-slider">
+                    <input type="range" id="brushSize" min="1" max="50" value="5" class="brush-size-slider">
                     <div id="brushPreview" class="brush-preview"></div>
                 </div>
                 <button id="publishBtn" class="publish-btn">Publish Now!</button>
@@ -85,8 +88,9 @@
                 <li>You can draw on the right half of the horse.</li>
                 <li>Choose colors and brush sizes to create your masterpiece.</li>
                 <li>You have only one chance to publish your drawing!</li>
+                <li>Feel free to download your creation anytime!</li>
             </ul>
-            <img src="assets/horse-animation.gif" alt="Tutorial GIF" class="tutorial-gif">
+            <img src="assets/tutorial.gif" alt="Tutorial GIF" class="tutorial-gif">
             <button id="closeTutorialBtn">Let's Get Started!</button>
         </div>
     </div>
@@ -122,6 +126,107 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Edit Username Modal -->
+    <div id="editUsernameModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Your Username</h3>
+            <input type="text" id="newUsername" class="title-input" placeholder="Enter new username">
+            <p class="username-info">Choose a unique username to identify your drawings!</p>
+            <button id="saveUsernameBtn" class="action-btn">Save Username</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/x/horse-gallery" target="_blank">GitHub</a>
+            <a href="https://x.com/horsegallery" target="_blank">X</a>
+        </div>
+        <p>&copy; 2025 Horse Gallery. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+<!-- gallery.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horse Gallery - Gallery</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <span class="hamburger">☰</span>
+            <div class="logo">Horse Gallery</div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span id="usernameDisplay">Loading...</span>
+                    <button id="editUsernameBtn" title="Edit username">✏️</button>
+                </div>
+                <nav class="navigation">
+                    <a href="index.html" class="nav-link">Draw</a>
+                    <a href="gallery.html" class="nav-link active">Gallery</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- CA bölümü -->
+    <div class="mobile-ca-section">
+        <div class="contract-address">
+            <span id="ca-text">0x1234...5678</span>
+            <button class="copy-btn">Copy</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="published-drawings">
+            <h2>All Drawings</h2>
+            <div class="filter-bar"></div>
+            <div id="gallery"></div>
+        </div>
+    </div>
+
+    <!-- View Drawing Modal -->
+    <div id="viewDrawingModal" class="modal">
+        <div class="modal-content view-drawing-modal">
+            <h3 id="viewDrawingTitle"></h3>
+            <p id="viewDrawingCreator"></p>
+            <div class="view-drawing-content">
+                <div class="drawing-image">
+                    <img id="viewDrawingImage" src="" alt="Drawing">
+                    <button id="downloadViewedImageBtn" class="download-btn">Download</button>
+                </div>
+                <div class="drawing-details">
+                    <button id="likeDrawingBtn">Like ❤️</button>
+                    <span id="likeCount">0</span>
+                    <div class="comments-section">
+                        <h4>Comments</h4>
+                        <div id="commentsList"></div>
+                        <textarea id="commentInput" class="comment-input" placeholder="Add a comment..."></textarea>
+                        <button id="submitCommentBtn" class="action-btn">Comment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Username Modal -->
+    <div id="editUsernameModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Your Username</h3>
+            <input type="text" id="newUsername" class="title-input" placeholder="Enter new username">
+            <p class="username-info">Choose a unique username to identify your drawings!</p>
+            <button id="saveUsernameBtn" class="action-btn">Save Username</button>
         </div>
     </div>
 
