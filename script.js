@@ -1,511 +1,700 @@
-/* script.js */
-// Element selections for the drawing application
-const canvas = document.getElementById('drawingCanvas');
-const ctx = canvas ? canvas.getContext('2d') : null;
-const clearBtn = document.getElementById('clearBtn');
-const undoBtn = document.getElementById('undoBtn');
-const eraserBtn = document.getElementById('eraserBtn');
-const downloadBtn = document.getElementById('downloadBtn');
-const publishBtn = document.getElementById('publishBtn');
-const colorPicker = document.getElementById('colorPicker');
-const brushSize = document.getElementById('brushSize');
-const brushPreview = document.getElementById('brushPreview');
-const gallery = document.getElementById('gallery');
-const colorButtons = document.querySelectorAll('.color-btn');
-const copyBtn = document.querySelector('.copy-btn');
-const caText = document.getElementById('ca-text');
-const publishModal = document.getElementById('publishModal');
-const drawingPreview = document.getElementById('drawingPreview');
-const drawingTitle = document.getElementById('drawingTitle');
-const confirmPublishBtn = document.getElementById('confirmPublishBtn');
-const horseImage = document.getElementById('half-horse');
-const viewDrawingModal = document.getElementById('viewDrawingModal');
-const viewDrawingTitle = document.getElementById('viewDrawingTitle');
-const viewDrawingCreator = document.getElementById('viewDrawingCreator');
-const viewDrawingImage = document.getElementById('viewDrawingImage');
-const usernameDisplay = document.getElementById('usernameDisplay');
-const likeDrawingBtn = document.getElementById('likeDrawingBtn');
-const likeCount = document.getElementById('likeCount');
-const commentsList = document.getElementById('commentsList');
-const commentInput = document.getElementById('commentInput');
-const submitCommentBtn = document.getElementById('submitCommentBtn');
-const tutorialModal = document.getElementById('tutorialModal');
-const closeTutorialBtn = document.getElementById('closeTutorialBtn');
-const hamburger = document.querySelector('.hamburger');
-const navigation = document.querySelector('.navigation');
-const editUsernameBtn = document.getElementById('editUsernameBtn');
-const editUsernameModal = document.getElementById('editUsernameModal');
-const newUsername = document.getElementById('newUsername');
-const saveUsernameBtn = document.getElementById('saveUsernameBtn');
-const downloadViewedImageBtn = document.getElementById('downloadViewedImageBtn');
+// Tüm gerekli element seçimleri
+const elements = {
+    // Çizim alanı elemanları
+    canvas: document.getElementById('drawingCanvas'),
+    clearBtn: document.getElementById('clearBtn'),
+    undoBtn: document.getElementById('undoBtn'),
+    eraserBtn: document.getElementById('eraserBtn'),
+    saveDrawingBtn: document.getElementById('saveDrawingBtn'),
+    publishBtn: document.getElementById('publishBtn'),
+    
+    // Renk ve fırça elemanları
+    colorPicker: document.getElementById('colorPicker'),
+    brushSize: document.getElementById('brushSize'),
+    brushPreview: document.getElementById('brushPreview'),
+    colorButtons: document.querySelectorAll('.color-btn'),
+    
+    // Kullanıcı bilgileri
+    usernameDisplay: document.getElementById('usernameDisplay'),
+    editUsernameBtn: document.getElementById('editUsernameBtn'),
+    editUsernameModal: document.getElementById('editUsernameModal'),
+    newUsernameInput: document.getElementById('newUsernameInput'),
+    saveUsernameBtn: document.getElementById('saveUsernameBtn'),
+    cancelUsernameBtn: document.getElementById('cancelUsernameBtn'),
+    
+    // Galeri ve modal elemanları
+    gallery: document.getElementById('gallery'),
+    viewDrawingModal: document.getElementById('viewDrawingModal'),
+    viewDrawingTitle: document.getElementById('viewDrawingTitle'),
+    viewDrawingCreator: document.getElementById('viewDrawingCreator'),
+    viewDrawingImage: document.getElementById('viewDrawingImage'),
+    likeDrawingBtn: document.getElementById('likeDrawingBtn'),
+    likeCount: document.getElementById('likeCount'),
+    commentsList: document.getElementById('commentsList'),
+    commentInput: document.getElementById('commentInput'),
+    submitCommentBtn: document.getElementById('submitCommentBtn'),
+    closeViewDrawingBtn: document.getElementById('closeViewDrawingBtn'),
+    
+    // İstatistik modalı
+    statisticsModal: document.getElementById('statisticsModal'),
+    showStatisticsBtn: document.getElementById('showStatisticsBtn'),
+    closeStatisticsBtn: document.getElementById('closeStatisticsBtn'),
+    totalDrawingsCount: document.getElementById('totalDrawingsCount'),
+    mostActiveCreator: document.getElementById('mostActiveCreator'),
+    mostLikedDrawing: document.getElementById('mostLikedDrawing'),
+    
+    // Diğer elemanlar
+    hamburger: document.querySelector('.hamburger'),
+    navigation: document.querySelector('.navigation'),
+    publishModal: document.getElementById('publishModal'),
+    drawingPreview: document.getElementById('drawingPreview'),
+    drawingTitle: document.getElementById('drawingTitle'),
+    confirmPublishBtn: document.getElementById('confirmPublishBtn'),
+    tutorialModal: document.getElementById('tutorialModal'),
+    closeTutorialBtn: document.getElementById('closeTutorialBtn')
+};
 
-let drawing = false;
-let currentColor = colorPicker ? colorPicker.value : '#000000';
-let undoHistory = [];
-let currentUser = null;
-let currentDrawing = null;
-let isErasing = false;
+// Ana uygulama durumu
+const appState = {
+    drawing: false,
+    currentColor: '#000000',
+    undoHistory: [],
+    currentUser: null,
+    currentDrawing: null,
+    isErasing: false
+};
 
-// Logging element availability for debugging
-console.log('Canvas:', canvas);
-console.log('Context:', ctx);
-console.log('Publish Button:', publishBtn);
-console.log('Eraser Button:', eraserBtn);
-console.log('Brush Preview:', brushPreview);
-console.log('Publish Modal:', publishModal);
-console.log('Drawing Preview:', drawingPreview);
-console.log('Drawing Title:', drawingTitle);
-console.log('Confirm Publish Button:', confirmPublishBtn);
-console.log('Horse Image:', horseImage);
-console.log('View Drawing Modal:', viewDrawingModal);
-console.log('Username Display:', usernameDisplay);
-console.log('Like Drawing Button:', likeDrawingBtn);
-console.log('Comments List:', commentsList);
-console.log('Tutorial Modal:', tutorialModal);
-console.log('Close Tutorial Button:', closeTutorialBtn);
-console.log('Download Button:', downloadBtn);
-
-// Configure CORS for the horse image
-if (horseImage) {
-    horseImage.crossOrigin = 'anonymous';
-    horseImage.onload = () => console.log('Horse image loaded successfully.');
-    horseImage.onerror = () => console.error('Failed to load horse image.');
-}
-
-// Word pool for generating random usernames
-const wordPool = [
-    'Crazy', 'Cool', 'Happy', 'Silly', 'Fast', 'Smart', 'Fancy', 'Wild', 'Brave', 'Clever',
-    'Swift', 'Mighty', 'Royal', 'Noble', 'Epic', 'Ninja', 'Wizard', 'Wonder', 'Magic', 'Sharp',
-    'Golden', 'Super', 'Hyper', 'Mega', 'Ultra', 'Master', 'Cosmic', 'Grand', 'Dream', 'Elite',
-    'Prime', 'Alpha', 'Chief', 'Hero', 'Legend', 'Star', 'Power', 'Lucky', 'Rapid', 'Gamer'
+// Kullanıcı adı için kelime havuzu
+const usernameWordPool = [
+    'Horny', 'Hippo', 'Satoshi', 'Moon', 'Lad', 'Toad', 'Pepe', 'Kek', 'Lmao', 'Noob',
+    'Pleb', 'Maxi', 'Bull', 'Bear', 'Ape', 'NGMI', 'GM', 'GN', 'Fren', 'Ser'
 ];
 
-// Function to hash a string using SHA-256
-async function sha256(str) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(str);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-}
+// Utility fonksiyonları
+const utils = {
+    // SHA-256 hash fonksiyonu
+    async sha256(str) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        const hash = await crypto.subtle.digest('SHA-256', data);
+        return Array.from(new Uint8Array(hash))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+    },
 
-// Function to generate a random username
-function generateRandomUsername() {
-    const word1 = wordPool[Math.floor(Math.random() * wordPool.length)];
-    const word2 = wordPool[Math.floor(Math.random() * wordPool.length)];
-    const number = Math.floor(Math.random() * 100) + 1;
-    return `${word1}${word2}${number}`;
-}
+    // Rastgele kullanıcı adı oluşturma
+    generateRandomUsername() {
+        const word1 = usernameWordPool[Math.floor(Math.random() * usernameWordPool.length)];
+        const word2 = usernameWordPool[Math.floor(Math.random() * usernameWordPool.length)];
+        const number = Math.floor(Math.random() * 100) + 1;
+        return `${word1}${word2}${number}`;
+    },
 
-// Initialize user based on IP address
-async function initializeUser() {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-        currentUser = JSON.parse(storedUser);
-        console.log('User loaded from localStorage:', currentUser);
-        if (usernameDisplay) {
-            usernameDisplay.textContent = currentUser.username;
+    // Modal işlemleri
+    toggleModal(modal, show = true) {
+        if (modal) {
+            modal.style.display = show ? 'flex' : 'none';
         }
-        checkPublishStatus();
-        return;
+    },
+
+    // Mesaj gösterme
+    showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('toast-out');
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 500);
+        }, 3000);
+    }
+};
+
+// Kullanıcı yönetimi
+const userManager = {
+    // Kullanıcı başlatma
+    async initializeUser() {
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser) {
+            appState.currentUser = JSON.parse(storedUser);
+            this.updateUsernameDisplay();
+            return;
+        }
+
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            const userId = await utils.sha256(data.ip);
+            const username = utils.generateRandomUsername();
+
+            appState.currentUser = { 
+                userId, 
+                username, 
+                hasPublished: false 
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(appState.currentUser));
+            this.updateUsernameDisplay();
+        } catch (err) {
+            console.error('Kullanıcı başlatma hatası:', err);
+            appState.currentUser = { 
+                userId: 'guest', 
+                username: `Guest${Math.floor(Math.random() * 100)}`, 
+                hasPublished: false 
+            };
+            localStorage.setItem('currentUser', JSON.stringify(appState.currentUser));
+            this.updateUsernameDisplay();
+        }
+    },
+
+    // Kullanıcı adını güncelleme
+    updateUsername(newUsername) {
+        if (!newUsername || newUsername.trim() === '') {
+            utils.showToast('Kullanıcı adı boş olamaz!', 'error');
+            return false;
+        }
+
+        if (newUsername.length > 20) {
+            utils.showToast('Kullanıcı adı çok uzun!', 'error');
+            return false;
+        }
+
+        // Kullanıcı adında özel karakterleri engelleme
+        const sanitizedUsername = newUsername.replace(/[^a-zA-Z0-9_]/g, '');
+
+        appState.currentUser.username = sanitizedUsername;
+        localStorage.setItem('currentUser', JSON.stringify(appState.currentUser));
+        this.updateUsernameDisplay();
+        utils.showToast('Kullanıcı adı güncellendi!', 'success');
+        return true;
+    },
+
+    // Kullanıcı adını ekranda gösterme
+    updateUsernameDisplay() {
+        if (elements.usernameDisplay && appState.currentUser) {
+            elements.usernameDisplay.textContent = appState.currentUser.username;
+        }
+    }
+};
+
+// Çizim yönetimi
+const drawingManager = {
+    // Canvas boyutlandırma
+    setCanvasSize() {
+        if (!elements.canvas) return;
+
+        const container = elements.canvas.parentElement;
+        const dpr = window.devicePixelRatio || 1;
+        const width = container.clientWidth;
+        const height = width * (2 / 3);
+
+        elements.canvas.style.width = `${width}px`;
+        elements.canvas.style.height = `${height}px`;
+        elements.canvas.width = width * dpr;
+        elements.canvas.height = height * dpr;
+        
+        const ctx = elements.canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+    },
+
+    // Çizimi kaydetme
+    saveDrawing() {
+        if (!elements.canvas) return;
+
+        const dataURL = elements.canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `horse-drawing-${new Date().toISOString().slice(0,10)}.png`;
+        link.href = dataURL;
+        link.click();
+        
+        utils.showToast('Çizim kaydedildi!', 'success');
+    },
+
+    // İstatistikleri hesaplama
+    calculateGalleryStatistics() {
+        const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
+        
+        // Toplam çizim sayısı
+        const totalDrawings = drawings.length;
+
+        // En aktif yaratıcıyı bulma
+        const creatorCounts = {};
+        drawings.forEach(drawing => {
+            creatorCounts[drawing.creator] = (creatorCounts[drawing.creator] || 0) + 1;
+        });
+        const mostActiveCreator = Object.keys(creatorCounts).reduce((a, b) => 
+            creatorCounts[a] > creatorCounts[b] ? a : b, '');
+
+        // En çok beğenilen çizimi bulma
+        const mostLikedDrawing = drawings.reduce((max, drawing) => 
+            (drawing.likes?.length || 0) > (max.likes?.length || 0) ? drawing : max, {});
+
+        // İstatistikleri güncelleme
+        if (elements.totalDrawingsCount) 
+            elements.totalDrawingsCount.textContent = totalDrawings;
+        
+        if (elements.mostActiveCreator) 
+            elements.mostActiveCreator.textContent = mostActiveCreator || '-';
+        
+        if (elements.mostLikedDrawing) 
+            elements.mostLikedDrawing.textContent = mostLikedDrawing.title || '-';
+    }
+};
+
+// Event listener'ları ayarlama
+function setupEventListeners() {
+    // Kullanıcı adı düzenleme
+    if (elements.editUsernameBtn) {
+        elements.editUsernameBtn.addEventListener('click', () => {
+            utils.toggleModal(elements.editUsernameModal);
+        });
     }
 
-    try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        const ip = data.ip;
-        console.log('IP address fetched:', ip);
-
-        const userId = await sha256(ip);
-        console.log('User ID (hashed IP):', userId);
-
-        const username = generateRandomUsername();
-        console.log('Generated username:', username);
-
-        currentUser = { userId, username, hasPublished: false };
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        console.log('User saved to localStorage:', currentUser);
-
-        if (usernameDisplay) {
-            usernameDisplay.textContent = currentUser.username;
-        }
-        checkPublishStatus();
-    } catch (err) {
-        console.error('Failed to fetch IP or generate user:', err);
-        currentUser = { userId: 'guest', username: 'GuestUser' + (Math.floor(Math.random() * 100) + 1), hasPublished: false };
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        if (usernameDisplay) {
-            usernameDisplay.textContent = currentUser.username;
-        }
-        checkPublishStatus();
+    if (elements.saveUsernameBtn) {
+        elements.saveUsernameBtn.addEventListener('click', () => {
+            const newUsername = elements.newUsernameInput.value.trim();
+            if (userManager.updateUsername(newUsername)) {
+                utils.toggleModal(elements.editUsernameModal, false);
+            }
+        });
     }
-}
 
-// Function to check if the user has already published
-function checkPublishStatus() {
-    if (currentUser && currentUser.hasPublished) {
-        if (publishBtn) {
-            publishBtn.disabled = true;
-            publishBtn.style.opacity = '0.5';
-            publishBtn.style.cursor = 'not-allowed';
-            publishBtn.title = 'You have already used your one publish right!';
-            console.log('User has already published, disabling publish button.');
-        }
+    if (elements.cancelUsernameBtn) {
+        elements.cancelUsernameBtn.addEventListener('click', () => {
+            utils.toggleModal(elements.editUsernameModal, false);
+        });
     }
-}
 
-// Function to set canvas size dynamically with 3:2 aspect ratio
-function setCanvasSize() {
-    if (!canvas) return;
-    const container = canvas.parentElement;
-    const dpr = window.devicePixelRatio || 1;
-    const width = container.clientWidth;
-    const height = width * (2 / 3); // 3:2 oranı (genişlik:yükseklik)
-
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    ctx.scale(dpr, dpr);
-
-    console.log(`Canvas size set to ${width}x${height} (dpr: ${dpr})`);
-}
-
-// Initialize canvas settings
-if (!canvas || !ctx) {
-    console.error('Canvas or context not found.');
-} else {
-    console.log('Canvas and context initialized successfully.');
-    setCanvasSize();
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    saveCanvasState();
-}
-
-// Resize canvas when window size changes
-window.addEventListener('resize', () => {
-    setCanvasSize();
-    const lastState = undoHistory[undoHistory.length - 1];
-    if (lastState) {
-        const img = new Image();
-        img.src = lastState;
-        img.onload = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-        };
+    // İstatistik modalı
+    if (elements.showStatisticsBtn) {
+        elements.showStatisticsBtn.addEventListener('click', () => {
+            drawingManager.calculateGalleryStatistics();
+            utils.toggleModal(elements.statisticsModal);
+        });
     }
+
+    if (elements.closeStatisticsBtn) {
+        elements.closeStatisticsBtn.addEventListener('click', () => {
+            utils.toggleModal(elements.statisticsModal, false);
+        });
+    }
+
+    // Çizim kaydetme
+    if (elements.saveDrawingBtn) {
+        elements.saveDrawingBtn.addEventListener('click', () => {
+            drawingManager.saveDrawing();
+        });
+    }
+
+    // Diğer event listener'ları buraya eklenecek
+}
+
+// Sayfa yüklendiğinde çalışacak fonksiyon
+document.addEventListener('DOMContentLoaded', () => {
+    userManager.initializeUser();
+    setupEventListeners();
+    
+    // Canvas boyutlandırma
+    drawingManager.setCanvasSize();
+    
+    // Pencere boyutu değiştiğinde canvas'ı yeniden boyutlandırma
+    window.addEventListener('resize', drawingManager.setCanvasSize);
 });
 
-// Function to save canvas state for undo functionality
-function saveCanvasState() {
-    undoHistory.push(canvas.toDataURL());
-    console.log('Canvas state saved. History length:', undoHistory.length);
-    if (undoHistory.length > 50) {
-        undoHistory.shift();
-    }
-}
+// Hata yakalama
+window.addEventListener('error', (event) => {
+    console.error('Yakalanmamış hata:', event.error);
+    utils.showToast('Bir hata oluştu!', 'error');
+});
 
-// Function to undo the last action on the canvas
-function undoLastAction() {
-    if (undoHistory.length <= 1) {
-        console.log('Nothing to undo.');
-        return;
-    }
+// Modülleri dışa aktarma (test ve genişletme için)
+window.userManager = userManager;
+window.drawingManager = drawingManager;
+window.utils = utils;
+const drawingController = {
+    ctx: null,
+    isDrawing: false,
+    
+    // Çizim için gerekli başlangıç ayarları
+    initializeDrawing() {
+        if (!elements.canvas) return;
+        
+        this.ctx = elements.canvas.getContext('2d');
+        this.setupDrawingListeners();
+        this.initializeBrushPreview();
+    },
 
-    undoHistory.pop();
-    const lastState = undoHistory[undoHistory.length - 1];
-    console.log('Undoing last action. History length:', undoHistory.length);
+    // Çizim event listener'larını ayarlama
+    setupDrawingListeners() {
+        if (!elements.canvas) return;
 
-    const img = new Image();
-    img.src = lastState;
-    img.onload = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-    };
-}
+        // Mouse olayları
+        elements.canvas.addEventListener('mousedown', this.startDrawing.bind(this));
+        elements.canvas.addEventListener('mousemove', this.draw.bind(this));
+        elements.canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
+        elements.canvas.addEventListener('mouseout', this.stopDrawing.bind(this));
 
-// Function to update the brush preview
-function updateBrushPreview() {
-    if (!brushPreview || !brushSize) return;
+        // Dokunmatik cihaz olayları
+        elements.canvas.addEventListener('touchstart', this.startDrawing.bind(this), { passive: false });
+        elements.canvas.addEventListener('touchmove', this.draw.bind(this), { passive: false });
+        elements.canvas.addEventListener('touchend', this.stopDrawing.bind(this));
 
-    const size = parseInt(brushSize.value);
-    brushPreview.style.width = `${size}px`;
-    brushPreview.style.height = `${size}px`;
-    if (isErasing) {
-        brushPreview.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-    } else {
-        brushPreview.style.backgroundColor = `${currentColor}80`;
-    }
-}
+        // Fırça ve renk kontrolleri
+        this.setupBrushControls();
+    },
 
-// Function to show the tutorial modal on first visit
-function showTutorialModal() {
-    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
-    if (hasSeenTutorial === 'true') {
-        console.log('User has already seen the tutorial.');
-        return;
-    }
-
-    if (tutorialModal) {
-        const backdrop = document.createElement('div');
-        backdrop.className = 'modal-backdrop tutorial-backdrop';
-        document.body.appendChild(backdrop);
-
-        tutorialModal.style.display = 'flex';
-        console.log('Showing tutorial modal with blurred backdrop');
-    }
-}
-
-// Event listener to close the tutorial modal
-if (closeTutorialBtn) {
-    closeTutorialBtn.addEventListener('click', () => {
-        if (tutorialModal) {
-            tutorialModal.style.display = 'none';
-            const backdrop = document.querySelector('.modal-backdrop.tutorial-backdrop');
-            if (backdrop) backdrop.remove();
-            localStorage.setItem('hasSeenTutorial', 'true');
-            console.log('Tutorial modal closed, saved to localStorage');
+    // Fırça kontrol ayarları
+    setupBrushControls() {
+        // Renk butonları
+        if (elements.colorButtons) {
+            elements.colorButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const color = button.dataset.color;
+                    appState.currentColor = color;
+                    appState.isErasing = false;
+                    
+                    // Aktif renk görselleştirmesi
+                    elements.colorButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Özel renk seçiciye de yansıtma
+                    if (elements.colorPicker) {
+                        elements.colorPicker.value = color;
+                    }
+                });
+            });
         }
-    });
-}
 
-// Close tutorial modal when clicking outside
-if (tutorialModal) {
-    window.addEventListener('click', (e) => {
-        if (e.target === tutorialModal) {
-            tutorialModal.style.display = 'none';
-            const backdrop = document.querySelector('.modal-backdrop.tutorial-backdrop');
-            if (backdrop) backdrop.remove();
-            localStorage.setItem('hasSeenTutorial', 'true');
-            console.log('Tutorial modal closed by clicking outside, saved to localStorage');
+        // Özel renk seçici
+        if (elements.colorPicker) {
+            elements.colorPicker.addEventListener('change', () => {
+                appState.currentColor = elements.colorPicker.value;
+                appState.isErasing = false;
+                
+                // Renk butonlarından aktif olanı kaldırma
+                if (elements.colorButtons) {
+                    elements.colorButtons.forEach(btn => btn.classList.remove('active'));
+                }
+            });
         }
-    });
-}
 
-// Hamburger menu toggle for mobile navigation
-if (hamburger && navigation) {
-    hamburger.addEventListener('click', () => {
-        navigation.classList.toggle('active');
-        console.log('Hamburger menu toggled');
-    });
-}
+        // Fırça boyutu
+        if (elements.brushSize) {
+            elements.brushSize.addEventListener('input', this.updateBrushPreview.bind(this));
+        }
 
-// Event listeners for color buttons
-if (colorButtons) {
-    colorButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            console.log('Color button clicked:', button.dataset.color);
-            colorButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            currentColor = button.dataset.color;
-            if (colorPicker) colorPicker.value = currentColor;
-            isErasing = false;
-            eraserBtn.classList.remove('active');
-            updateBrushPreview();
-        });
-    });
-}
+        // Silgi butonu
+        if (elements.eraserBtn) {
+            elements.eraserBtn.addEventListener('click', () => {
+                appState.isErasing = !appState.isErasing;
+                elements.eraserBtn.classList.toggle('active');
+                this.updateBrushPreview();
+            });
+        }
+    },
 
-// Event listener for color picker changes
-if (colorPicker) {
-    colorPicker.addEventListener('change', () => {
-        console.log('Color picker changed:', colorPicker.value);
-        currentColor = colorPicker.value;
-        colorButtons.forEach(btn => btn.classList.remove('active'));
-        isErasing = false;
-        eraserBtn.classList.remove('active');
-        updateBrushPreview();
-    });
-}
+    // Fırça önizlemesini güncelleme
+    updateBrushPreview() {
+        if (!elements.brushPreview || !elements.brushSize) return;
 
-// Event listener for brush size changes
-if (brushSize) {
-    brushSize.addEventListener('input', () => {
-        console.log('Brush size changed:', brushSize.value);
-        updateBrushPreview();
-    });
-}
-
-// Event listener for eraser button
-if (eraserBtn) {
-    eraserBtn.addEventListener('click', () => {
-        console.log('Eraser button clicked');
-        isErasing = !isErasing;
-        if (isErasing) {
-            eraserBtn.classList.add('active');
-            colorButtons.forEach(btn => btn.classList.remove('active'));
+        const size = parseInt(elements.brushSize.value);
+        const previewEl = elements.brushPreview;
+        
+        previewEl.style.width = `${size}px`;
+        previewEl.style.height = `${size}px`;
+        
+        if (appState.isErasing) {
+            previewEl.style.backgroundColor = 'rgba(255,255,255,0.5)';
+            previewEl.style.border = '1px dashed #666';
         } else {
-            eraserBtn.classList.remove('active');
+            previewEl.style.backgroundColor = `${appState.currentColor}80`;
+            previewEl.style.border = `2px solid ${appState.currentColor}`;
         }
-        updateBrushPreview();
-    });
-}
+    },
 
-// Drawing event listeners for mouse and touch interactions
-if (canvas && ctx) {
-    // Function to get touch/mouse coordinates
-    function getCoordinates(event) {
-        const rect = canvas.getBoundingClientRect();
+    // Çizim başlatma
+    startDrawing(e) {
+        e.preventDefault();
+        if (!this.ctx) return;
+
+        this.isDrawing = true;
+        this.draw(e);
+    },
+
+    // Çizim yapma
+    draw(e) {
+        if (!this.isDrawing) return;
+        e.preventDefault();
+
+        const rect = elements.canvas.getBoundingClientRect();
         const dpr = window.devicePixelRatio || 1;
+        
         let x, y;
-
-        if (event.type.includes('touch')) {
-            const touch = event.touches[0];
-            x = (touch.clientX - rect.left) * (canvas.width / dpr) / rect.width;
-            y = (touch.clientY - rect.top) * (canvas.height / dpr) / rect.height;
+        if (e.type.includes('touch')) {
+            const touch = e.touches[0];
+            x = (touch.clientX - rect.left) * (elements.canvas.width / dpr) / rect.width;
+            y = (touch.clientY - rect.top) * (elements.canvas.height / dpr) / rect.height;
         } else {
-            x = (event.clientX - rect.left) * (canvas.width / dpr) / rect.width;
-            y = (event.clientY - rect.top) * (canvas.height / dpr) / rect.height;
+            x = (e.clientX - rect.left) * (elements.canvas.width / dpr) / rect.width;
+            y = (e.clientY - rect.top) * (elements.canvas.height / dpr) / rect.height;
         }
 
-        return { x, y };
+        this.ctx.beginPath();
+        this.ctx.moveTo(x, y);
+        
+        // Çizim ayarları
+        this.ctx.lineWidth = parseInt(elements.brushSize.value);
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        if (appState.isErasing) {
+            this.ctx.globalCompositeOperation = 'destination-out';
+            this.ctx.strokeStyle = 'rgba(0,0,0,1)';
+        } else {
+            this.ctx.globalCompositeOperation = 'source-over';
+            this.ctx.strokeStyle = appState.currentColor;
+        }
+
+        this.ctx.lineTo(x, y);
+        this.ctx.stroke();
+    },
+
+    // Çizimi durdurma
+    stopDrawing(e) {
+        if (!this.isDrawing) return;
+        e.preventDefault();
+
+        this.isDrawing = false;
+        this.ctx.closePath();
+        
+        // Geri alma geçmişine kaydetme
+        this.saveCanvasState();
+    },
+
+    // Canvas durumunu kaydetme
+    saveCanvasState() {
+        if (!elements.canvas) return;
+
+        const dataURL = elements.canvas.toDataURL();
+        appState.undoHistory.push(dataURL);
+
+        // Geri alma geçmişini sınırlama
+        if (appState.undoHistory.length > 20) {
+            appState.undoHistory.shift();
+        }
+    },
+
+    // Son işlemi geri alma
+    undoLastAction() {
+        if (appState.undoHistory.length <= 1) return;
+
+        appState.undoHistory.pop(); // Şu anki durumu çıkar
+        const lastState = appState.undoHistory[appState.undoHistory.length - 1];
+
+        const img = new Image();
+        img.onload = () => {
+            this.ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+            this.ctx.drawImage(img, 0, 0);
+        };
+        img.src = lastState;
+    },
+
+    // Canvas'ı temizleme
+    clearCanvas() {
+        if (!this.ctx) return;
+
+        this.ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+        this.saveCanvasState();
+    },
+
+    // Başlangıç ayarları
+    initializeBrushPreview() {
+        this.updateBrushPreview();
+    }
+};
+
+// Yayınlama yönetimi
+const publishManager = {
+    // Çizimi yayınlama
+    publishDrawing() {
+        if (!appState.currentUser || appState.currentUser.hasPublished) {
+            utils.showToast('Zaten çizim yayınladınız!', 'error');
+            return;
+        }
+
+        if (!elements.canvas) {
+            utils.showToast('Canvas bulunamadı!', 'error');
+            return;
+        }
+
+        // Çizimi kaydetme
+        const dataURL = elements.canvas.toDataURL('image/png');
+        const title = elements.drawingTitle ? elements.drawingTitle.value.trim() : 'Untitled';
+
+        const newDrawing = {
+            image: dataURL,
+            title: title || 'Untitled',
+            creator: appState.currentUser.username,
+            likes: [],
+            comments: [],
+            timestamp: new Date().toISOString()
+        };
+
+        // Çizimleri localStorage'da saklama
+        const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
+        drawings.push(newDrawing);
+        
+        try {
+            localStorage.setItem('drawings', JSON.stringify(drawings));
+            
+            // Kullanıcının yayınlama hakkını kullandığını işaretleme
+            appState.currentUser.hasPublished = true;
+            localStorage.setItem('currentUser', JSON.stringify(appState.currentUser));
+
+            utils.showToast('Çizim başarıyla yayınlandı!', 'success');
+            
+            // Galeriyi güncelleme
+            if (typeof loadDrawings === 'function') {
+                loadDrawings();
+            }
+        } catch (error) {
+            console.error('Çizim yayınlama hatası:', error);
+            utils.showToast('Çizim yayınlanamadı!', 'error');
+        }
+    }
+};
+
+// Son event listener'ları ve başlatma fonksiyonları
+function finalSetup() {
+    // Temizleme butonu
+    if (elements.clearBtn) {
+        elements.clearBtn.addEventListener('click', () => {
+            drawingController.clearCanvas();
+        });
     }
 
-    // Mouse events
-    canvas.addEventListener('mousedown', (e) => {
-        const { x, y } = getCoordinates(e);
-        console.log('Mouse down:', x, y);
-        drawing = true;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-    });
+    // Geri alma butonu
+    if (elements.undoBtn) {
+        elements.undoBtn.addEventListener('click', () => {
+            drawingController.undoLastAction();
+        });
+    }
 
-    canvas.addEventListener('mousemove', (e) => {
-        if (drawing) {
-            const { x, y } = getCoordinates(e);
-            console.log('Mouse move:', x, y);
-            if (isErasing) {
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.strokeStyle = 'rgba(0,0,0,1)';
-            } else {
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.strokeStyle = currentColor;
-            }
-            ctx.lineWidth = brushSize.value;
-            ctx.lineTo(x, y);
-            ctx.stroke();
-        }
-    });
+    // Yayınlama butonu
+    if (elements.confirmPublishBtn) {
+        elements.confirmPublishBtn.addEventListener('click', () => {
+            publishManager.publishDrawing();
+        });
+    }
 
-    canvas.addEventListener('mouseup', () => {
-        console.log('Mouse up');
-        drawing = false;
-        ctx.closePath();
-        saveCanvasState();
-    });
-
-    canvas.addEventListener('mouseleave', () => {
-        if (drawing) {
-            console.log('Mouse leave');
-            drawing = false;
-            ctx.closePath();
-            saveCanvasState();
-        }
-    });
-
-    // Touch events
-    canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        const { x, y } = getCoordinates(e);
-        console.log('Touch start:', x, y);
-        drawing = true;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-    });
-
-    canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (drawing) {
-            const { x, y } = getCoordinates(e);
-            console.log('Touch move:', x, y);
-            if (isErasing) {
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.strokeStyle = 'rgba(0,0,0,1)';
-            } else {
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.strokeStyle = currentColor;
-            }
-            ctx.lineWidth = brushSize.value;
-            ctx.lineTo(x, y);
-            ctx.stroke();
-        }
-    });
-
-    canvas.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        console.log('Touch end');
-        drawing = false;
-        ctx.closePath();
-        saveCanvasState();
-    });
-
-    // Prevent scrolling while drawing on touch devices
-    canvas.addEventListener('touchmove', (e) => {
-        if (drawing) {
+    // Klavye kısayolları
+    document.addEventListener('keydown', (e) => {
+        // Ctrl+Z ile geri alma
+        if (e.ctrlKey && e.key === 'z') {
             e.preventDefault();
+            drawingController.undoLastAction();
+        }
+
+        // Ctrl+S ile kaydetme
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            drawingManager.saveDrawing();
         }
     });
+
+    // Çizim kontrollerini başlatma
+    drawingController.initializeDrawing();
 }
 
-// Event listener for clear button
-if (clearBtn && ctx) {
-    clearBtn.addEventListener('click', () => {
-        console.log('Clearing canvas');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        saveCanvasState();
-    });
-}
+// Sayfa yüklendiğinde son ayarları yapma
+document.addEventListener('DOMContentLoaded', () => {
+    userManager.initializeUser();
+    setupEventListeners();
+    drawingManager.setCanvasSize();
+    finalSetup();
 
-// Event listener for undo button
-if (undoBtn) {
-    undoBtn.addEventListener('click', () => {
-        undoLastAction();
-    });
-}
+    // Pencere boyutu değiştiğinde canvas'ı yeniden boyutlandırma
+    window.addEventListener('resize', drawingManager.setCanvasSize);
+});
 
-// Event listener for download button
-if (downloadBtn && canvas) {
-    downloadBtn.addEventListener('click', () => {
-        console.log('Downloading drawing');
-        const combinedImage = combineCanvasWithHorse();
-        if (combinedImage) {
-            const link = document.createElement('a');
-            link.href = combinedImage;
-            link.download = 'horse-drawing.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } else {
-            console.error('Could not combine canvas with horse image for download.');
-            alert('Failed to download drawing. Please try again.');
+// Global nesnelere ekleme (test ve genişletme için)
+window.drawingController = drawingController;
+window.publishManager = publishManager;
+// Uygulama yapılandırması ve global nesne
+window.HorseGallery = {
+    version: '1.0.0',
+    config: {
+        maxUndoHistory: 20,
+        maxUsernameLength: 20,
+        debug: true
+    },
+    modules: {
+        drawingController,
+        publishManager,
+        userManager,
+        drawingManager,
+        utils
+    },
+    // Genel uygulama başlatma fonksiyonu
+    init() {
+        try {
+            // Tüm başlatma işlemlerini merkezi olarak yönet
+            userManager.initializeUser();
+            setupEventListeners();
+            drawingManager.setCanvasSize();
+            finalSetup();
+
+            if (this.config.debug) {
+                console.log('Horse Gallery initialized successfully');
+                console.log('Active modules:', Object.keys(this.modules));
+            }
+        } catch (error) {
+            console.error('Uygulama başlatma hatası:', error);
+            utils.showToast('Uygulama yüklenirken bir sorun oluştu!', 'error');
         }
-    });
-}
-
-// Event listener for downloading viewed image
-if (downloadViewedImageBtn) {
-    downloadViewedImageBtn.addEventListener('click', () => {
-        console.log('Downloading viewed image');
-        if (viewDrawingImage && viewDrawingImage.src) {
-            const link = document.createElement('a');
-            link.href = viewDrawingImage.src;
-            const title = viewDrawingTitle.textContent || 'horse-drawing';
-            link.download = `${title.toLowerCase().replace(/\s+/g, '-')}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } else {
-            console.error('No drawing image to download.');
-            alert('Failed to download drawing. Please try again.');
+    },
+    // Hata ayıklama için yardımcı fonksiyonlar
+    debug: {
+        clearAllData() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('drawings');
+            console.warn('Tüm veriler temizlendi');
+        },
+        getCurrentState() {
+            return {
+                user: JSON.parse(localStorage.getItem('currentUser')),
+                drawings: JSON.parse(localStorage.getItem('drawings'))
+            };
         }
-    });
-}
-
-// Keyboard shortcut for undo (Ctrl+Z)
-document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'z') {
-        console.log('Ctrl+Z pressed');
-        e.preventDefault();
-        undoLastAction();
     }
+};
+
+// Performans ve hata izleme
+window.addEventListener('load', () => {
+    const loadTime = window.performance.now();
+    console.log(`Sayfa yükleme süresi: ${loadTime.toFixed(2)} ms`);
+});
+
+// Son kontrol ve başlatma
+document.addEventListener('DOMContentLoaded', () => {
+    window.HorseGallery.init();
+});
+
+// Tarayıcı desteği ve uyumluluk kontrolü
+(function checkBrowserCompatibility() {
+    const incompatibleFeatures = [];
+
+    if (!window.localStorage) incompatibleFeatures.push('LocalStorage');
+    if (!window.fetch) incompatibleFeatures.push('Fetch API');
+    if (!window.crypto) incompatibleFeatures.push('Web Crypto API');
+
+    if (incompatibleFeatures.length > 0) {
+        console.warn('Tarayıcı uyumsuzluğu:', incompatibleFeatures);
+        utils.showToast(`Bu tarayıcı tam olarak desteklenmiyor: ${incompatibleFeatures.join(', ')}`, 'warning');
+    }
+})();
