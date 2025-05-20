@@ -223,12 +223,13 @@ function updateBrushPreview() {
     if (!brushPreview || !brushSize) return;
 
     const size = parseInt(brushSize.value);
-    brushPreview.style.width = ${size}px;
-    brushPreview.style.height = ${size}px;
+    brushPreview.style.width = `${size}px`;
+    brushPreview.style.height = `${size}px`;
+
     if (isErasing) {
         brushPreview.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
     } else {
-        brushPreview.style.backgroundColor = ${currentColor}80;
+        brushPreview.style.backgroundColor = `${currentColor}80`;
     }
 }
 
@@ -532,7 +533,7 @@ function hideLoading() {
 
 // Function to load drawings from localStorage with filtering
 function loadDrawings(filter = 'latest') {
-    console.log(Loading drawings with filter: ${filter});
+    console.log(`Loading drawings with filter: ${filter}`);
     if (!gallery) {
         console.error('Gallery element not found.');
         return;
@@ -573,7 +574,7 @@ function loadDrawings(filter = 'latest') {
 
         const creator = document.createElement('p');
         creator.className = 'creator';
-        creator.textContent = Creator: ${drawing.creator || 'Unknown'};
+        creator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
         galleryItem.appendChild(creator);
 
         const stats = document.createElement('div');
@@ -598,7 +599,7 @@ function loadDrawings(filter = 'latest') {
                 currentDrawing = { ...drawing, index: originalIndex };
                 viewDrawingImage.src = drawing.image;
                 viewDrawingTitle.textContent = drawing.title || 'Untitled';
-                viewDrawingCreator.textContent = Creator: ${drawing.creator || 'Unknown'};
+                viewDrawingCreator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
                 viewDrawingModal.style.display = 'flex';
                 updateLikesAndComments();
             } else {
@@ -630,7 +631,7 @@ function setupFilterButtons() {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             loadDrawings(filter.id);
-            console.log(Filter changed to: ${filter.id});
+            console.log(`Filter changed to: ${filter.id}`);
         });
         filterBar.appendChild(btn);
     });
@@ -667,7 +668,7 @@ function updateLikesAndComments() {
 
             const timestamp = document.createElement('span');
             timestamp.className = 'timestamp';
-            timestamp.textContent =  (${new Date(comment.timestamp).toLocaleString()});
+            timestamp.textContent = `(${new Date(comment.timestamp).toLocaleString()})`;
             commentDiv.appendChild(timestamp);
 
             const text = document.createElement('p');
