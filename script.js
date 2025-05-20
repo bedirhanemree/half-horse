@@ -1,16 +1,18 @@
+/* script.js */
 // Element selections for the drawing application
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 const clearBtn = document.getElementById('clearBtn');
 const undoBtn = document.getElementById('undoBtn');
 const eraserBtn = document.getElementById('eraserBtn');
+const downloadBtn = document.getElementById('downloadBtn');
 const publishBtn = document.getElementById('publishBtn');
 const colorPicker = document.getElementById('colorPicker');
 const brushSize = document.getElementById('brushSize');
 const brushPreview = document.getElementById('brushPreview');
 const gallery = document.getElementById('gallery');
 const colorButtons = document.querySelectorAll('.color-btn');
-const copyBtn = document.getElementById('copyBtn');
+const copyBtn = document.querySelector('.copy-btn');
 const caText = document.getElementById('ca-text');
 const publishModal = document.getElementById('publishModal');
 const drawingPreview = document.getElementById('drawingPreview');
@@ -31,6 +33,11 @@ const tutorialModal = document.getElementById('tutorialModal');
 const closeTutorialBtn = document.getElementById('closeTutorialBtn');
 const hamburger = document.querySelector('.hamburger');
 const navigation = document.querySelector('.navigation');
+const editUsernameBtn = document.getElementById('editUsernameBtn');
+const editUsernameModal = document.getElementById('editUsernameModal');
+const newUsername = document.getElementById('newUsername');
+const saveUsernameBtn = document.getElementById('saveUsernameBtn');
+const downloadViewedImageBtn = document.getElementById('downloadViewedImageBtn');
 
 let drawing = false;
 let currentColor = colorPicker ? colorPicker.value : '#000000';
@@ -56,6 +63,7 @@ console.log('Like Drawing Button:', likeDrawingBtn);
 console.log('Comments List:', commentsList);
 console.log('Tutorial Modal:', tutorialModal);
 console.log('Close Tutorial Button:', closeTutorialBtn);
+console.log('Download Button:', downloadBtn);
 
 // Configure CORS for the horse image
 if (horseImage) {
@@ -66,11 +74,10 @@ if (horseImage) {
 
 // Word pool for generating random usernames
 const wordPool = [
-    'Horny', 'Hippo', 'Satoshi', 'Moon', 'Lad', 'Tits', 'Wanker', 'Hodl', 'Balls', 'Rekt',
-    'Crypto', 'Shill', 'Fomo', 'Whale', 'Pump', 'Dump', 'Degen', 'Rug', 'Scam', 'Bag',
-    'Diamond', 'Paper', 'Hands', 'Chad', 'Virgin', 'Toad', 'Pepe', 'Kek', 'Lmao', 'Noob',
-    'Pleb', 'Maxi', 'Shit', 'Coin', 'Bull', 'Bear', 'Ape', 'NGMI', 'GM', 'GN',
-    'Fren', 'Ser', 'Wen', 'Lambo', 'Stonk', 'Bitch', 'Dick', 'Ass', 'Booty', 'Thot'
+    'Crazy', 'Cool', 'Happy', 'Silly', 'Fast', 'Smart', 'Fancy', 'Wild', 'Brave', 'Clever',
+    'Swift', 'Mighty', 'Royal', 'Noble', 'Epic', 'Ninja', 'Wizard', 'Wonder', 'Magic', 'Sharp',
+    'Golden', 'Super', 'Hyper', 'Mega', 'Ultra', 'Master', 'Cosmic', 'Grand', 'Dream', 'Elite',
+    'Prime', 'Alpha', 'Chief', 'Hero', 'Legend', 'Star', 'Power', 'Lucky', 'Rapid', 'Gamer'
 ];
 
 // Function to hash a string using SHA-256
@@ -225,7 +232,6 @@ function updateBrushPreview() {
     const size = parseInt(brushSize.value);
     brushPreview.style.width = `${size}px`;
     brushPreview.style.height = `${size}px`;
-
     if (isErasing) {
         brushPreview.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
     } else {
@@ -458,6 +464,44 @@ if (undoBtn) {
     });
 }
 
+// Event listener for download button
+if (downloadBtn && canvas) {
+    downloadBtn.addEventListener('click', () => {
+        console.log('Downloading drawing');
+        const combinedImage = combineCanvasWithHorse();
+        if (combinedImage) {
+            const link = document.createElement('a');
+            link.href = combinedImage;
+            link.download = 'horse-drawing.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            console.error('Could not combine canvas with horse image for download.');
+            alert('Failed to download drawing. Please try again.');
+        }
+    });
+}
+
+// Event listener for downloading viewed image
+if (downloadViewedImageBtn) {
+    downloadViewedImageBtn.addEventListener('click', () => {
+        console.log('Downloading viewed image');
+        if (viewDrawingImage && viewDrawingImage.src) {
+            const link = document.createElement('a');
+            link.href = viewDrawingImage.src;
+            const title = viewDrawingTitle.textContent || 'horse-drawing';
+            link.download = `${title.toLowerCase().replace(/\s+/g, '-')}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            console.error('No drawing image to download.');
+            alert('Failed to download drawing. Please try again.');
+        }
+    });
+}
+
 // Keyboard shortcut for undo (Ctrl+Z)
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'z') {
@@ -465,419 +509,3 @@ document.addEventListener('keydown', (e) => {
         e.preventDefault();
         undoLastAction();
     }
-});
-
-// Function to combine canvas drawing with the horse image
-function combineCanvasWithHorse() {
-    console.log('Combining canvas with horse image...');
-    if (!canvas || !horseImage) {
-        console.error('Canvas or horse image not found.');
-        return null;
-    }
-
-    const tempCanvas = document.createElement('canvas');
-    const targetWidth = 600;
-    const targetHeight = 400;
-    tempCanvas.width = targetWidth;
-    tempCanvas.height = targetHeight;
-    const tempCtx = tempCanvas.getContext('2d');
-
-    if (!tempCtx) {
-        console.error('Temporary canvas context not found.');
-        return null;
-    }
-
-    console.log('Drawing horse image...');
-    try {
-        tempCtx.drawImage(horseImage, 0, 0, targetWidth, targetHeight);
-    } catch (err) {
-        console.error('Error drawing horse image:', err);
-        return null;
-    }
-
-    console.log('Drawing canvas content...');
-    try {
-        tempCtx.drawImage(canvas, 0, 0, targetWidth, targetHeight);
-    } catch (err) {
-        console.error('Error drawing canvas content:', err);
-        return null;
-    }
-
-    console.log('Exporting canvas to data URL...');
-    try {
-        const dataURL = tempCanvas.toDataURL('image/png', 0.7);
-        console.log('Combined image created:', dataURL.substring(0, 50) + '...');
-        return dataURL;
-    } catch (err) {
-        console.error('Failed to export canvas to data URL:', err);
-        return null;
-    }
-}
-
-// Function to show loading animation
-function showLoading() {
-    let loading = document.querySelector('.loading');
-    if (!loading) {
-        loading = document.createElement('div');
-        loading.className = 'loading';
-        document.body.appendChild(loading);
-    }
-    loading.style.display = 'block';
-}
-
-// Function to hide loading animation
-function hideLoading() {
-    const loading = document.querySelector('.loading');
-    if (loading) loading.style.display = 'none';
-}
-
-// Function to load drawings from localStorage with filtering
-function loadDrawings(filter = 'latest') {
-    console.log(`Loading drawings with filter: ${filter}`);
-    if (!gallery) {
-        console.error('Gallery element not found.');
-        return;
-    }
-
-    const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-    console.log('Loaded drawings from localStorage:', drawings);
-
-    gallery.innerHTML = '';
-    if (drawings.length === 0) {
-        console.log('No drawings found in localStorage.');
-        const message = document.createElement('p');
-        message.textContent = 'No drawings yet.';
-        message.style.color = '#FFFFFF';
-        gallery.appendChild(message);
-        return;
-    }
-
-    let sortedDrawings = [...drawings];
-    if (filter === 'popular') {
-        sortedDrawings.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
-    } else {
-        sortedDrawings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    }
-
-    const isHomePage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
-    const drawingsToShow = isHomePage ? sortedDrawings.slice(0, 5) : sortedDrawings;
-
-    drawingsToShow.forEach((drawing, index) => {
-        console.log('Rendering drawing:', drawing);
-        const galleryItem = document.createElement('div');
-        galleryItem.className = 'gallery-item';
-
-        const img = document.createElement('img');
-        img.src = drawing.image;
-        img.onerror = () => console.error('Failed to load image:', drawing.image);
-        galleryItem.appendChild(img);
-
-        const creator = document.createElement('p');
-        creator.className = 'creator';
-        creator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
-        galleryItem.appendChild(creator);
-
-        const stats = document.createElement('div');
-        stats.className = 'stats';
-
-        const likeCount = document.createElement('span');
-        likeCount.className = 'like-count';
-        likeCount.textContent = (drawing.likes || []).length;
-        stats.appendChild(likeCount);
-
-        const commentCount = document.createElement('span');
-        commentCount.className = 'comment-count';
-        commentCount.textContent = (drawing.comments || []).length;
-        stats.appendChild(commentCount);
-
-        galleryItem.appendChild(stats);
-
-        galleryItem.addEventListener('click', () => {
-            console.log('Gallery item clicked:', drawing.title);
-            if (viewDrawingModal && viewDrawingImage && viewDrawingTitle && viewDrawingCreator) {
-                const originalIndex = drawings.findIndex(d => d.timestamp === drawing.timestamp);
-                currentDrawing = { ...drawing, index: originalIndex };
-                viewDrawingImage.src = drawing.image;
-                viewDrawingTitle.textContent = drawing.title || 'Untitled';
-                viewDrawingCreator.textContent = `Creator: ${drawing.creator || 'Unknown'}`;
-                viewDrawingModal.style.display = 'flex';
-                updateLikesAndComments();
-            } else {
-                console.error('View drawing modal elements not found.');
-            }
-        });
-
-        gallery.appendChild(galleryItem);
-    });
-}
-
-// Function to set up filter buttons for the gallery
-function setupFilterButtons() {
-    const filterBar = document.querySelector('.filter-bar');
-    if (!filterBar) return;
-
-    const filters = [
-        { id: 'latest', label: 'Latest' },
-        { id: 'popular', label: 'Most Liked' }
-    ];
-
-    filters.forEach(filter => {
-        const btn = document.createElement('button');
-        btn.className = 'filter-btn';
-        btn.textContent = filter.label;
-        btn.dataset.filter = filter.id;
-        if (filter.id === 'latest') btn.classList.add('active');
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            loadDrawings(filter.id);
-            console.log(`Filter changed to: ${filter.id}`);
-        });
-        filterBar.appendChild(btn);
-    });
-}
-
-// Function to update likes and comments in the view drawing modal
-function updateLikesAndComments() {
-    if (!currentDrawing || !likeCount || !commentsList || !likeDrawingBtn) return;
-
-    const likes = currentDrawing.likes || [];
-    likeCount.textContent = likes.length;
-    if (currentUser && likes.includes(currentUser.userId)) {
-        likeDrawingBtn.classList.add('liked');
-    } else {
-        likeDrawingBtn.classList.remove('liked');
-    }
-
-    commentsList.innerHTML = '';
-    const comments = currentDrawing.comments || [];
-    if (comments.length === 0) {
-        const noComments = document.createElement('p');
-        noComments.textContent = 'No comments yet.';
-        noComments.style.color = '#999';
-        commentsList.appendChild(noComments);
-    } else {
-        comments.forEach(comment => {
-            const commentDiv = document.createElement('div');
-            commentDiv.className = 'comment';
-
-            const username = document.createElement('span');
-            username.className = 'username';
-            username.textContent = comment.username;
-            commentDiv.appendChild(username);
-
-            const timestamp = document.createElement('span');
-            timestamp.className = 'timestamp';
-            timestamp.textContent = `(${new Date(comment.timestamp).toLocaleString()})`;
-            commentDiv.appendChild(timestamp);
-
-            const text = document.createElement('p');
-            text.className = 'text';
-            text.textContent = comment.comment;
-            commentDiv.appendChild(text);
-
-            commentsList.appendChild(commentDiv);
-        });
-    }
-
-    loadDrawings();
-}
-
-// Event listener for liking a drawing
-if (likeDrawingBtn) {
-    likeDrawingBtn.addEventListener('click', () => {
-        if (!currentUser || !currentDrawing) return;
-
-        const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-        const drawing = drawings[currentDrawing.index];
-        if (!drawing.likes) drawing.likes = [];
-
-        const userId = currentUser.userId;
-        const index = drawing.likes.indexOf(userId);
-
-        if (index === -1) {
-            drawing.likes.push(userId);
-            console.log('Liked drawing:', drawing.title);
-        } else {
-            drawing.likes.splice(index, 1);
-            console.log('Unliked drawing:', drawing.title);
-        }
-
-        drawings[currentDrawing.index] = drawing;
-        try {
-            localStorage.setItem('drawings', JSON.stringify(drawings));
-            console.log('Drawings updated in localStorage');
-        } catch (err) {
-            console.error('Failed to save drawings to localStorage:', err);
-            alert('Error saving drawing. LocalStorage might be full.');
-        }
-        currentDrawing = { ...drawing, index: currentDrawing.index };
-        updateLikesAndComments();
-    });
-}
-
-// Event listener for submitting a comment
-if (submitCommentBtn) {
-    submitCommentBtn.addEventListener('click', () => {
-        if (!currentUser || !currentDrawing || !commentInput) return;
-
-        const commentText = commentInput.value.trim();
-        if (!commentText) {
-            alert('Please write a comment before submitting.');
-            return;
-        }
-
-        const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-        const drawing = drawings[currentDrawing.index];
-        if (!drawing.comments) drawing.comments = [];
-
-        const newComment = {
-            userId: currentUser.userId,
-            username: currentUser.username,
-            comment: commentText,
-            timestamp: new Date().toISOString()
-        };
-
-        drawing.comments.push(newComment);
-        drawings[currentDrawing.index] = drawing;
-        try {
-            localStorage.setItem('drawings', JSON.stringify(drawings));
-            console.log('Drawings updated in localStorage');
-        } catch (err) {
-            console.error('Failed to save drawings to localStorage:', err);
-            alert('Error saving comment. LocalStorage might be full.');
-        }
-        currentDrawing = { ...drawing, index: currentDrawing.index };
-        commentInput.value = '';
-        updateLikesAndComments();
-        console.log('Comment added:', newComment);
-    });
-}
-
-// Initialize everything when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Page loaded, initializing user and loading drawings...');
-    initializeUser();
-    loadDrawings();
-    setupFilterButtons();
-    updateBrushPreview();
-    showTutorialModal();
-});
-
-// Event listener for publish button
-if (publishBtn) {
-    publishBtn.addEventListener('click', () => {
-        console.log('Publish button clicked.');
-        if (currentUser.hasPublished) {
-            alert('You have already used your one publish right!');
-            return;
-        }
-
-        if (!publishModal) {
-            console.error('Publish modal not found.');
-            return;
-        }
-        if (!drawingPreview) {
-            console.error('Drawing preview not found.');
-            return;
-        }
-
-        const combinedImage = combineCanvasWithHorse();
-        if (combinedImage) {
-            console.log('Setting drawing preview source...');
-            drawingPreview.src = combinedImage;
-            publishModal.style.display = 'flex';
-            if (drawingTitle) {
-                console.log('Clearing drawing title input...');
-                drawingTitle.value = '';
-            }
-        } else {
-            console.error('Could not combine canvas with horse image.');
-        }
-    });
-}
-
-// Event listener for confirming the publish action
-if (confirmPublishBtn) {
-    confirmPublishBtn.addEventListener('click', () => {
-        console.log('Confirm Publish button clicked.');
-        showLoading();
-        setTimeout(() => {
-            if (!drawingPreview) {
-                console.error('Drawing preview not found.');
-                hideLoading();
-                return;
-            }
-            if (!drawingTitle) {
-                console.error('Drawing title input not found.');
-                hideLoading();
-                return;
-            }
-
-            const dataURL = drawingPreview.src;
-            const title = drawingTitle.value.trim() || 'Untitled';
-
-            const drawings = JSON.parse(localStorage.getItem('drawings')) || [];
-            drawings.push({
-                image: dataURL,
-                title: title,
-                creator: currentUser ? currentUser.username : 'Unknown',
-                likes: [],
-                comments: [],
-                timestamp: new Date().toISOString()
-            });
-            try {
-                localStorage.setItem('drawings', JSON.stringify(drawings));
-                console.log('Saved drawing to localStorage:', { image: dataURL, title: title, creator: currentUser ? currentUser.username : 'Unknown' });
-            } catch (err) {
-                console.error('Failed to save drawings to localStorage:', err);
-                alert('Error saving drawing. LocalStorage might be full.');
-            }
-
-            currentUser.hasPublished = true;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            console.log('User has published, updated hasPublished status:', currentUser);
-
-            checkPublishStatus();
-
-            loadDrawings();
-            publishModal.style.display = 'none';
-            hideLoading();
-        }, 1000);
-    });
-}
-
-// Close publish modal when clicking outside
-if (publishModal) {
-    window.addEventListener('click', (e) => {
-        if (e.target === publishModal) {
-            console.log('Closing publish modal by clicking outside.');
-            publishModal.style.display = 'none';
-        }
-    });
-}
-
-// Close view drawing modal when clicking outside
-if (viewDrawingModal) {
-    window.addEventListener('click', (e) => {
-        if (e.target === viewDrawingModal) {
-            console.log('Closing view drawing modal by clicking outside.');
-            viewDrawingModal.style.display = 'none';
-        }
-    });
-}
-
-// Event listener for copying contract address
-if (copyBtn && caText) {
-    copyBtn.addEventListener('click', () => {
-        console.log('Copy button clicked.');
-        const textToCopy = caText.textContent;
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert('Contract Address copied to clipboard!');
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
-        });
-    });
-}
-
-// End of script.js
